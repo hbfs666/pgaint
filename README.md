@@ -2,6 +2,15 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+### .env file
+
+REACT_APP_RMA_SITE=PJV
+REACT_APP_BASEURL='http://localhost:8085' your backend address
+REACT_APP_APP_VERSION=1.0
+
+REACT_APP_HEADER_CONDITIONLIST=DISPATCH_ID,SN_MODEL,DISPOSITION
+REACT_APP_BODY_CONDITIONLIST=DISPATCH_ID,SN_MODEL,SERIAL_NR,TRAN_OWNER
+
 ## Available Scripts
 
 In the project directory, you can run:
