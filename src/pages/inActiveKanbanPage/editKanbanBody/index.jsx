@@ -1,4 +1,5 @@
 import React, { useEffect, useState, lazy } from "react";
+import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Button,
@@ -18,6 +19,7 @@ import {
   Fab,
   Divider,
   Stack,
+  Grid,
 } from "@mui/material";
 import {
   EditSharp,
@@ -29,10 +31,12 @@ import Loadable from "../../../components/Loadable";
 import AddIcon from "@mui/icons-material/Add";
 import { useError } from "../../../context/ErrorHandlerContext";
 import { useMutation } from "@tanstack/react-query";
+import { useKanbanContext } from "../../../context/KanbanContext";
 import {
-  getHeaderCategorySettings,
-  createOrupdateHeaderCategorySettings,
-  deleteCategoryGroupSetting
+  getBodyCategorySettings,
+  createOrupdateBodyCategorySettings,
+  deleteCategoryGroupSetting,
+  activeKanban,
 } from "../../../api/apiClientService";
 
 const StationListEditor = Loadable(
@@ -46,10 +50,19 @@ const CategorySettingEditor = Loadable(
 );
 
 const DeleteConfirmationDialogGroupSetting = Loadable(
-  lazy(()=> import("../../../components/DeleteCategoryGroupSettingPopUp"))
-)
+  lazy(() => import("../../../components/DeleteCategoryGroupSettingPopUp"))
+);
 
-const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
+const KanbanActivationPopUp = Loadable(
+  lazy(() => import("../../../components/KanbanActivationPopUp"))
+);
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+const EditKanbanBodyForm = ({ kanbanRecord, setActiveStep }) => {
+  const { reloadContext } = useKanbanContext();
   const theme = useTheme();
   const downXL = useMediaQuery(theme.breakpoints.down("xl"));
   const downSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -57,6 +70,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
   const [rows, setRows] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [editData, setEditData] = useState({
     category_id: "",
@@ -64,31 +78,41 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
     group_condition: "",
     category_sequence: "",
     station_list: "",
+    category_name: "",
+    group_sequence: "",
     category_type: "",
   });
 
+  const history = useNavigate();
   // New state for Full-Screen Dialog
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedDeleteRow,setSelectedDeleteRow] = useState(null)
 
-  const handleDeleteDialogOpen =(row)=>{
-    setSelectedDeleteRow(row)
-    setSelectedCategoryId(row.category_id)
-    setIsDeleteDialogOpen(true)
-  }
-  const getCurrentRow =()=> selectedDeleteRow
+  const handleDeleteDialogOpen = (row) => {
+    setSelectedRow(row);
+    setSelectedCategoryId(row.category_id);
+    setIsDeleteDialogOpen(true);
+  };
+  const getCurrentRow = () => selectedRow;
 
-  const handleDeleteDialogClose =()=>{
-    setSelectedCategoryId(null)
-    setSelectedDeleteRow(null)
-    setIsDeleteDialogOpen(false)
-  }
+  const handleDeleteDialogClose = () => {
+    setSelectedCategoryId(null);
+    setSelectedRow(null);
+    setIsDeleteDialogOpen(false);
+  };
 
-  const handleDeleteConfirm =(Id)=>{
-    deleteCategoryGroupSettingMutation.mutate(Id)
-    setIsDeleteDialogOpen(false)
-  }
+  const handleDeleteConfirm = (Id) => {
+    deleteCategoryGroupSettingMutation.mutate(Id);
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleConfirmOpen = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmClose = () => {
+    setIsConfirmOpen(false);
+  };
 
   const handleDialogOpen = (row) => {
     setSelectedRow(row);
@@ -101,20 +125,37 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
   };
 
   const deleteCategoryGroupSettingMutation = useMutation({
-    mutationFn:(categoryId)=>deleteCategoryGroupSetting(categoryId),
-    onError:(error)=>{
-      showMessage("Error deleting category group setting: "+error.message,"error")
+    mutationFn: (categoryId) => deleteCategoryGroupSetting(categoryId),
+    onError: (error) => {
+      showMessage(
+        "Error deleting category group setting: " + error.message,
+        "error"
+      );
     },
-    onSuccess:()=>{
-      showMessage("Category Setting deleted successfully","success");
-      getHeaderSettings.mutate()
-    }
-  })
+    onSuccess: () => {
+      showMessage("Category Setting deleted successfully", "success");
+      getBodySettings.mutate();
+    },
+  });
+
+  const activateKanban = useMutation({
+    mutationFn: (mappingKey) => activeKanban(mappingKey),
+    onError: (error) => {
+      showMessage("Error in activate kanban: " + error.message, "error");
+    },
+    onSuccess: async() => {
+      showMessage("Activate Kanban", "success");
+      reloadContext();
+      await sleep(450);
+      history(`/kanban/`+kanbanRecord.mapping_key);
+      window.location.reload();
+    },
+  });
 
   // Use useMutation for form submission
-  const getHeaderSettings = useMutation({
+  const getBodySettings = useMutation({
     mutationFn: () =>
-      getHeaderCategorySettings(
+      getBodyCategorySettings(
         kanbanRecord.mapping_key
         //4
       ),
@@ -124,14 +165,14 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
     },
     onSuccess: (data) => {
       setRows(data);
-      showMessage("Kanban fetched successfully", "success");
+      showMessage("Kanban body fetched successfully", "success");
     },
   });
 
   // Create or update a category
   const createOrUpdateCategory = useMutation({
     mutationFn: (data) =>
-      createOrupdateHeaderCategorySettings(
+      createOrupdateBodyCategorySettings(
         kanbanRecord.mapping_key,
         //4,
         data.category_id,
@@ -139,14 +180,16 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
         data.group_condition,
         data.category_sequence,
         data.station_list,
-        data.category_type,
+        data.category_name,
+        data.group_sequence,
+        data.category_type
       ),
     onError: (error) => {
       showMessage("Error saving category: " + error.response.data, "error");
     },
     onSuccess: () => {
       showMessage("Category saved successfully", "success");
-      getHeaderSettings.mutate(); // Refresh data
+      getBodySettings.mutate(); // Refresh data
     },
   });
 
@@ -154,7 +197,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
     if (kanbanRecord == null) {
       showMessage("Please create Kanban record ", "error");
     }
-    getHeaderSettings.mutate();
+    getBodySettings.mutate();
   }, [kanbanRecord]);
 
   const handleEditOpen = (row) => {
@@ -175,14 +218,20 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
     setIsEditOpen(false);
   };
 
+  const handleActivateConfirm = () => {
+    activateKanban.mutate(kanbanRecord.mapping_key);
+  };
+
   const handleAdd = () => {
     createOrUpdateCategory.mutate({
       category_id: "",
       group_name: editData.group_name || "",
       group_condition: editData.group_condition || "",
-      category_sequence: editData.category_sequence || "",
+      category_sequence: editData.category_sequence || 0,
       station_list: editData.station_list || "",
-      category_type: editData.category_type||"",
+      category_name: editData.category_name || "",
+      group_sequence: editData.group_sequence || 0,
+      category_type: editData.category_type || "",
     });
     setIsEditOpen(false);
   };
@@ -223,16 +272,32 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
       align: "center",
     },
     {
-      field: "category_type",
-      headerName: "Category Type",
+      field: "station_list",
+      headerName: "Station List",
       flex: 1,
       minWidth: 150,
       headerAlign: "center",
       align: "center",
     },
     {
-      field: "station_list",
-      headerName: "Station List",
+      field: "category_name",
+      headerName: "Category Name",
+      flex: 1,
+      minWidth: 150,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "group_sequence",
+      headerName: "Group Sequence",
+      flex: 1,
+      minWidth: 150,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "category_type",
+      headerName: "Category Type",
       flex: 1,
       minWidth: 150,
       headerAlign: "center",
@@ -293,7 +358,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
       minWidth={"100%"}
     >
       <Box
-        width={downXL ? "80vw" : "100%"}
+        width={downXL ? "90vw" : "100%"}
         height="65vh" // Fixed height for DataGrid container
         position="relative"
       >
@@ -309,14 +374,16 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             alignItems="center"
             divider={<Divider orientation="vertical" flexItem />}
             sx={{
-              flexWrap: 'wrap',
+              flexWrap: "wrap",
             }}
           >
-            <Box sx={{ maxWidth: '100%', textAlign: { xs: 'center', sm: 'left' } }}>
+            <Box
+              sx={{ maxWidth: "100%", textAlign: { xs: "center", sm: "left" } }}
+            >
               <Typography variant="h3" gutterBottom>
-                {downSM? "" : "Kanban Name: "}
+                {downSM ? "" : "Kanban Name: "}
                 <Typography
-                  variant={downSM? "h4" : "h3"}
+                  variant={downSM ? "h4" : "h3"}
                   color="green"
                   component="span"
                   style={{ textTransform: "uppercase" }}
@@ -326,11 +393,13 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
                 </Typography>
               </Typography>
             </Box>
-            <Box sx={{ maxWidth: '100%', textAlign: { xs: 'center', sm: 'left' } }}>
+            <Box
+              sx={{ maxWidth: "100%", textAlign: { xs: "center", sm: "left" } }}
+            >
               <Typography variant="h3" gutterBottom>
-               {downSM? "" : "Product Type: "}
+                {downSM ? "" : "Product Type: "}
                 <Typography
-                  variant={downSM? "h4" : "h3"}
+                  variant={downSM ? "h4" : "h3"}
                   color="green"
                   component="span"
                   style={{ textTransform: "uppercase" }}
@@ -361,7 +430,10 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
                 group_name: "",
                 group_condition: "",
                 station_list: "",
-                category_sequence: "",
+                category_sequence: 0,
+                group_sequence: 0,
+                category_name: "",
+                category_type: "",
               })
             }
           >
@@ -401,25 +473,50 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             minWidth: "100%",
           }}
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={() => setActiveStep(2)}
-          sx={{
-            backgroundColor:
-              theme.palette.mode === "dark" ? "#4caf50" : "#4caf50", // Button color based on mode
-            "&:hover": {
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#388e3c" : "#388e3c", // Button hover color based on mode
-              boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
-            },
-            marginTop: "10px",
-          }}
-        >
-          Next
-        </Button>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => setActiveStep(1)}
+                sx={{
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#1976d2" : "#1976d2", // Button color based on mode
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#1565c0" : "#1565c0", // Button hover color based on mode
+                    boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
+                  },
+                  marginTop: "10px",
+                }}
+              >
+                Perious
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => handleConfirmOpen()}
+                sx={{
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#4caf50" : "#4caf50", // Button color based on mode
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#388e3c" : "#388e3c", // Button hover color based on mode
+                    boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
+                  },
+                  marginTop: "10px",
+                }}
+              >
+                Confirm
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
       <Dialog
         open={isEditOpen}
@@ -440,8 +537,8 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           border={`1px solid ${theme.palette.divider}`}
         >
           {editData.category_id
-            ? "Edit Header | Group Name: "+editData.group_name
-            : "Add Header Category"}
+            ? "Edit Body | Group Name: "+editData.group_name
+            : "Add Body Category "}
         </DialogTitle>
         <DialogContent>
           <Box
@@ -450,19 +547,37 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             p={2}
             width="100%"
           >
-            <Typography>Group Name</Typography>
-            <Select
-              value={editData.group_name}
-              onChange={(e) => handleChange(e)}
+            <TextField
+              margin="dense"
+              label="Group Name"
               name="group_name"
+              id="group-name"
+              value={editData.group_name}
+              onChange={handleChange}
               fullWidth
-              id="Header-Group-Name"
-            >
-              <MenuItem value="WIP">WIP</MenuItem>
-              <MenuItem value="INPUT">INPUT</MenuItem>
-              <MenuItem value="OUTPUT">OUTPUT</MenuItem>
-            </Select>
+              type="string"
+              InputProps={{ style: { color: theme.palette.text.primary } }}
+            />
           </Box>
+          <Box
+            border={`1px solid ${theme.palette.divider}`}
+            borderRadius={1}
+            p={2}
+            width="100%"
+          >
+            <TextField
+              margin="dense"
+              label="Group Sequence"
+              name="group_sequence"
+              id="group-sequence"
+              value={editData.group_sequence}
+              onChange={handleChange}
+              fullWidth
+              type="number"
+              InputProps={{ style: { color: theme.palette.text.primary } }}
+            />
+          </Box>
+
           <GroupConditionEditor
             conditions={
               editData.group_condition
@@ -470,7 +585,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
                 : []
             }
             onConditionsChange={handleConditionChange}
-            conditionsList={process.env.REACT_APP_HEADER_CONDITIONLIST.split(
+            conditionsList={process.env.REACT_APP_BODY_CONDITIONLIST.split(
               ","
             )}
           />
@@ -491,6 +606,24 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             type="number"
             InputProps={{ style: { color: theme.palette.text.primary } }}
           />
+          <Box
+            border={`1px solid ${theme.palette.divider}`}
+            borderRadius={1}
+            p={2}
+            width="100%"
+          >
+            <TextField
+              margin="dense"
+              label="Category Name"
+              name="category_name"
+              id="category-name"
+              value={editData.category_name}
+              onChange={handleChange}
+              fullWidth
+              type="string"
+              InputProps={{ style: { color: theme.palette.text.primary } }}
+            />
+          </Box>
           <Box
             border={`1px solid ${theme.palette.divider}`}
             borderRadius={1}
@@ -535,16 +668,24 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           rowData={selectedRow}
         />
       )}
-      {
-        isDeleteDialogOpen?(<DeleteConfirmationDialogGroupSetting
-        open={isDeleteDialogOpen}
-        onClose={handleDeleteDialogClose}
-        onConfirm={()=>handleDeleteConfirm(selectedCategoryId)}
-        onRow={getCurrentRow()}
-        />):null
-      }
+      {isDeleteDialogOpen ? (
+        <DeleteConfirmationDialogGroupSetting
+          open={isDeleteDialogOpen}
+          onClose={handleDeleteDialogClose}
+          onConfirm={() => handleDeleteConfirm(selectedCategoryId)}
+          onRow={getCurrentRow()}
+        />
+      ) : null}
+      {isConfirmOpen ? (
+        <KanbanActivationPopUp
+          open={isConfirmOpen}
+          onClose={handleConfirmClose}
+          onConfirm={handleActivateConfirm}
+          kanbanRecord={kanbanRecord}
+        />
+      ) : null}
     </Box>
   );
 };
 
-export default KanbanHeaderForm;
+export default EditKanbanBodyForm;

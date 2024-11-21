@@ -35,6 +35,7 @@ export default function DrawerFooter() {
         component={Link}
         to="/addKanban"
         variant="contained"
+        disabled={process.env.REACT_APP_MASTER_MODE}
         startIcon={<AddCircleOutlineIcon />}
         sx={{
           mb: 1,

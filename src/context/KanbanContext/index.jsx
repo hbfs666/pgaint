@@ -11,12 +11,12 @@ export const useKanbanContext = () => useContext(KanbanContext);
 
 // Create a provider component
 export const KanbanProvider = ({ children }) => {
-  const { data:activeData, isLoading, error } = useQuery({
+  const { data:activeData, isLoading, error,refetch: refetchActive } = useQuery({
     queryKey: ['kanbanActive'],
     queryFn: getAllActiveKanban,
   });
 
-  const {data:inactiveData,isLoading:inavtiveDataIsloading,error:inactiveError} = useQuery({
+  const {data:inactiveData,isLoading:inavtiveDataIsloading,error:inactiveError,refetch: refetchInactive} = useQuery({
     queryKey: ['kanbaninActive'],
     queryFn: getAllInactiveKanban, 
   });
@@ -28,9 +28,14 @@ export const KanbanProvider = ({ children }) => {
   if (error||inactiveError) {
     return <div>Error loading kanban data.</div>;
   }
+
+  const reloadContext = () => {
+    refetchActive();
+    refetchInactive();
+  };
   
   return (
-    <KanbanContext.Provider value={{activeData,inactiveData}}>
+    <KanbanContext.Provider value={{activeData,inactiveData,reloadContext}}>
       {children}
     </KanbanContext.Provider>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, TextField, IconButton, MenuItem, Select, InputLabel, FormControl, useTheme, FormLabel } from '@mui/material';
+import { Box, Chip, TextField, IconButton, MenuItem, Select, InputLabel, FormControl, useTheme, FormLabel, Typography } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { useError } from "../context/ErrorHandlerContext";
 
@@ -43,7 +43,7 @@ const GroupConditionEditor = ({ conditions, onConditionsChange, conditionsList }
 
   return (
     <Box border={`1px solid ${theme.palette.divider}`} borderRadius={1} p={2} width="100%">
-      <FormLabel>Group Conditions:</FormLabel>
+      <Typography>Group Conditions:</Typography>
       <Box
         display="flex"
         flexWrap="nowrap"
@@ -77,15 +77,17 @@ const GroupConditionEditor = ({ conditions, onConditionsChange, conditionsList }
         </Box>
       </Box>
       <Box display="flex" flexDirection="column" gap={0.8}>
-        <FormControl fullWidth>
-          <InputLabel>Condition</InputLabel>
+        <FormControl fullWidth >
+          <InputLabel id="condition-label">Condition</InputLabel>
           <Select
+            id="condition-label"
+            name='condition'
             value={selectedCondition}
             onChange={(e) => setSelectedCondition(e.target.value)}
             label="Condition"
           >
             {conditionsList.map((condition, index) => (
-              <MenuItem key={index} value={condition}>{condition}</MenuItem>
+              <MenuItem key={index} value={condition} id={`condition-${index}`}>{condition}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -93,20 +95,23 @@ const GroupConditionEditor = ({ conditions, onConditionsChange, conditionsList }
           value={valueInput}
           onChange={(e) => setValueInput(e.target.value)}
           label="Value"
+          name='value'
           variant="outlined"
           fullWidth
           InputProps={{ style: { color: theme.palette.text.primary } }}
         />
         <FormControl fullWidth>
-          <InputLabel>Percent Position</InputLabel>
+          <InputLabel id="percent-position-label">Percent Position</InputLabel>
           <Select
+            id="percent-position-label"
+            name="percentPosition"
             value={percentPosition}
             onChange={(e) => setPercentPosition(e.target.value)}
             label="Percent Position"
           >
-            <MenuItem value="">None</MenuItem>
-            <MenuItem value="start">% at Start</MenuItem>
-            <MenuItem value="end">% at End</MenuItem>
+            <MenuItem value="" id="percent-none">None</MenuItem>
+            <MenuItem value="start"id="percent-start">% at Start</MenuItem>
+            <MenuItem value="end" id="percent-end">% at End</MenuItem>
           </Select>
         </FormControl>
         <IconButton color="primary" onClick={handleAddCondition}>

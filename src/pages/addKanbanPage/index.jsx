@@ -1,17 +1,16 @@
 import React, { useMemo, useEffect, useState, lazy } from "react";
 import { Box, TableContainer, Paper, Typography, Button } from "@mui/material";
-import Header from "../../components/header";
 import Loadable from "../../components/Loadable";
 import CustomizedStepper from "../../components/Stepper";
-import LandingPage from "../landingPage";
 
 const CreateKanban = Loadable(lazy(() => import("./createKanban")));
-const KanbanHeader = Loadable(lazy(()=>import("./createKanbanHeader")))
+const CreateKanbanHeader = Loadable(lazy(()=>import("./createKanbanHeader")))
+const CreateKanbanBody = Loadable(lazy(()=>import("./createKanbanBody")))
 
 const addKanbanSteps = [
-  'Kanban',
-  'Kanban Header',
-  'Kanban Body'
+  'Create Kanban',
+  'Add Kanban Header',
+  'Add Kanban Body'
 ];
 
 const AddKanban = () => {
@@ -42,11 +41,11 @@ const AddKanban = () => {
       case 0:
         return <CreateKanban setKanbanRecord={setKanbanRecord} kanbanRecord={kanbanRecord} setActiveStep={setActiveStep} />
       case 1:
-        return <KanbanHeader kanbanRecord={kanbanRecord} setActiveStep={setActiveStep}/>;
+        return <CreateKanbanHeader kanbanRecord={kanbanRecord} setActiveStep={setActiveStep}/>;
       case 2:
-        //return <CreateKanbanBody mappingNumber={mappingNumber} />;
-      default:
-        return <CreateKanban KanbanRecord={setKanbanRecord} setActiveStep={setActiveStep} />;
+        return <CreateKanbanBody kanbanRecord={kanbanRecord} setActiveStep={setActiveStep} />;
+      // default:
+      //   return <CreateKanban KanbanRecord={setKanbanRecord} setActiveStep={setActiveStep} />;
     }
   };
   //const customizedStepperComponent = useMemo(() => <CustomizedStepper steps={addKanbanSteps} currentStep={1} />, []);
@@ -56,7 +55,7 @@ const AddKanban = () => {
         mt={5}
         justifyContent="center"
         alignItems="center"
-        height="10vh"
+        height="5vh"
         width="80vw"
         mx="auto"
       >
@@ -72,7 +71,7 @@ const AddKanban = () => {
       >
         {renderStepContent(activeStep)}
       </Box>
-      <Box
+      {/* <Box
        mt={5}
        justifyContent="center"
        alignItems="center"
@@ -81,7 +80,7 @@ const AddKanban = () => {
        mx="auto">
         <Button onClick={nextStep}>Next</Button>
         <Button onClick={prevStep}>Prev</Button>
-      </Box>
+      </Box> */}
       
     </Box>
   );

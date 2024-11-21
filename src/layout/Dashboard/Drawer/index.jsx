@@ -54,6 +54,7 @@ export default function MainDrawer({ window }) {
       {isButtonVisible && (
         <IconButton
           onClick={toggleDrawer(true)}
+          aria-label="Open navigation menu"
           sx={{
             position: "fixed",
             left: 0,
@@ -75,6 +76,7 @@ export default function MainDrawer({ window }) {
         open={isDrawerOpen}
         onClose={toggleDrawer(false)}
         ModalProps={{ keepMounted: true }}
+        aria-labelledby="navigation-drawer"
         sx={{
           display: "block",
           "& .MuiDrawer-paper": {
