@@ -18,6 +18,7 @@ import {
   Fab,
   Divider,
   Stack,
+  Grid,
 } from "@mui/material";
 import {
   EditSharp,
@@ -32,7 +33,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
   getHeaderCategorySettings,
   createOrupdateHeaderCategorySettings,
-  deleteCategoryGroupSetting
+  deleteCategoryGroupSetting,
 } from "../../../api/apiClientService";
 
 const StationListEditor = Loadable(
@@ -46,10 +47,10 @@ const CategorySettingEditor = Loadable(
 );
 
 const DeleteConfirmationDialogGroupSetting = Loadable(
-  lazy(()=> import("../../../components/DeleteCategoryGroupSettingPopUp"))
-)
+  lazy(() => import("../../../components/DeleteCategoryGroupSettingPopUp"))
+);
 
-const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
+const EditKanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
   const theme = useTheme();
   const downXL = useMediaQuery(theme.breakpoints.down("xl"));
   const downSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -70,25 +71,24 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
   // New state for Full-Screen Dialog
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedDeleteRow,setSelectedDeleteRow] = useState(null)
 
-  const handleDeleteDialogOpen =(row)=>{
-    setSelectedDeleteRow(row)
-    setSelectedCategoryId(row.category_id)
-    setIsDeleteDialogOpen(true)
-  }
-  const getCurrentRow =()=> selectedDeleteRow
+  const handleDeleteDialogOpen = (row) => {
+    setSelectedRow(row);
+    setSelectedCategoryId(row.category_id);
+    setIsDeleteDialogOpen(true);
+  };
+  const getCurrentRow = () => selectedRow;
 
-  const handleDeleteDialogClose =()=>{
-    setSelectedCategoryId(null)
-    setSelectedDeleteRow(null)
-    setIsDeleteDialogOpen(false)
-  }
+  const handleDeleteDialogClose = () => {
+    setSelectedCategoryId(null);
+    setSelectedRow(null);
+    setIsDeleteDialogOpen(false);
+  };
 
-  const handleDeleteConfirm =(Id)=>{
-    deleteCategoryGroupSettingMutation.mutate(Id)
-    setIsDeleteDialogOpen(false)
-  }
+  const handleDeleteConfirm = (Id) => {
+    deleteCategoryGroupSettingMutation.mutate(Id);
+    setIsDeleteDialogOpen(false);
+  };
 
   const handleDialogOpen = (row) => {
     setSelectedRow(row);
@@ -101,15 +101,18 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
   };
 
   const deleteCategoryGroupSettingMutation = useMutation({
-    mutationFn:(categoryId)=>deleteCategoryGroupSetting(categoryId),
-    onError:(error)=>{
-      showMessage("Error deleting category group setting: "+error.message,"error")
+    mutationFn: (categoryId) => deleteCategoryGroupSetting(categoryId),
+    onError: (error) => {
+      showMessage(
+        "Error deleting category group setting: " + error.message,
+        "error"
+      );
     },
-    onSuccess:()=>{
-      showMessage("Category Setting deleted successfully","success");
-      getHeaderSettings.mutate()
-    }
-  })
+    onSuccess: () => {
+      showMessage("Category Setting deleted successfully", "success");
+      getHeaderSettings.mutate();
+    },
+  });
 
   // Use useMutation for form submission
   const getHeaderSettings = useMutation({
@@ -182,7 +185,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
       group_condition: editData.group_condition || "",
       category_sequence: editData.category_sequence || "",
       station_list: editData.station_list || "",
-      category_type: editData.category_type||"",
+      category_type:editData.category_type ||"",
     });
     setIsEditOpen(false);
   };
@@ -223,13 +226,13 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
       align: "center",
     },
     {
-      field: "category_type",
-      headerName: "Category Type",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
+        field: "category_type",
+        headerName: "Category Type",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
     {
       field: "station_list",
       headerName: "Station List",
@@ -258,6 +261,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           <IconButton
             color="secondary"
             onClick={() => handleDialogOpen(params.row)}
+            disabled={isDialogOpen}
           >
             <ArrowOutwardSharp
               sx={{
@@ -269,6 +273,7 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           <IconButton
             color="primary"
             onClick={() => handleEditOpen(params.row)}
+            disabled={isEditOpen}
           >
             <EditSharp sx={{ fill: "lightgreen", fontSize: "large" }} />
           </IconButton>
@@ -309,14 +314,16 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             alignItems="center"
             divider={<Divider orientation="vertical" flexItem />}
             sx={{
-              flexWrap: 'wrap',
+              flexWrap: "wrap",
             }}
           >
-            <Box sx={{ maxWidth: '100%', textAlign: { xs: 'center', sm: 'left' } }}>
+            <Box
+              sx={{ maxWidth: "100%", textAlign: { xs: "center", sm: "left" } }}
+            >
               <Typography variant="h3" gutterBottom>
-                {downSM? "" : "Kanban Name: "}
+                {downSM ? "" : "Kanban Name: "}
                 <Typography
-                  variant={downSM? "h4" : "h3"}
+                  variant={downSM ? "h4" : "h3"}
                   color="green"
                   component="span"
                   style={{ textTransform: "uppercase" }}
@@ -326,11 +333,13 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
                 </Typography>
               </Typography>
             </Box>
-            <Box sx={{ maxWidth: '100%', textAlign: { xs: 'center', sm: 'left' } }}>
+            <Box
+              sx={{ maxWidth: "100%", textAlign: { xs: "center", sm: "left" } }}
+            >
               <Typography variant="h3" gutterBottom>
-               {downSM? "" : "Product Type: "}
+                {downSM ? "" : "Product Type: "}
                 <Typography
-                  variant={downSM? "h4" : "h3"}
+                  variant={downSM ? "h4" : "h3"}
                   color="green"
                   component="span"
                   style={{ textTransform: "uppercase" }}
@@ -401,25 +410,50 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
             minWidth: "100%",
           }}
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={() => setActiveStep(2)}
-          sx={{
-            backgroundColor:
-              theme.palette.mode === "dark" ? "#4caf50" : "#4caf50", // Button color based on mode
-            "&:hover": {
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#388e3c" : "#388e3c", // Button hover color based on mode
-              boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
-            },
-            marginTop: "10px",
-          }}
-        >
-          Next
-        </Button>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => setActiveStep(0)}
+                sx={{
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#1976d2" : "#1976d2", // Button color based on mode
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#1565c0" : "#1565c0", // Button hover color based on mode
+                    boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
+                  },
+                  marginTop: "10px",
+                }}
+              >
+                Perious
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => setActiveStep(2)}
+                sx={{
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#4caf50" : "#4caf50", // Button color based on mode
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#388e3c" : "#388e3c", // Button hover color based on mode
+                    boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
+                  },
+                  marginTop: "10px",
+                }}
+              >
+                Next
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
       <Dialog
         open={isEditOpen}
@@ -440,8 +474,8 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           border={`1px solid ${theme.palette.divider}`}
         >
           {editData.category_id
-            ? "Edit Header | Group Name: "+editData.group_name
-            : "Add Header Category"}
+            ? "Edit Header | Group Name: " + editData.group_name
+            : "Add Header Category"}{" "}
         </DialogTitle>
         <DialogContent>
           <Box
@@ -535,16 +569,16 @@ const KanbanHeaderForm = ({ kanbanRecord, setActiveStep }) => {
           rowData={selectedRow}
         />
       )}
-      {
-        isDeleteDialogOpen?(<DeleteConfirmationDialogGroupSetting
-        open={isDeleteDialogOpen}
-        onClose={handleDeleteDialogClose}
-        onConfirm={()=>handleDeleteConfirm(selectedCategoryId)}
-        onRow={getCurrentRow()}
-        />):null
-      }
+      {isDeleteDialogOpen ? (
+        <DeleteConfirmationDialogGroupSetting
+          open={isDeleteDialogOpen}
+          onClose={handleDeleteDialogClose}
+          onConfirm={() => handleDeleteConfirm(selectedCategoryId)}
+          onRow={getCurrentRow()}
+        />
+      ) : null}
     </Box>
   );
 };
 
-export default KanbanHeaderForm;
+export default EditKanbanHeaderForm;

@@ -7,6 +7,9 @@ import { useKanbanContext } from "../context/KanbanContext";
 const TestPage = Loadable(lazy(() => import("../pages/testPage")));
 const LandingPage = Loadable(lazy(() => import("../pages/landingPage")));
 const AddKanbanPage = Loadable(lazy(() => import("../pages/addKanbanPage")));
+const InActiveKanbanPege = Loadable(lazy(()=> import("../pages/inActiveKanbanPage")))
+const ActiveKanbanPage = Loadable(lazy(()=> import("../pages/activeKanbanPage")))
+
 
 const DynamicRouter = () => {
   //const { data: routes, isLoading, isError } = useQuery(['routes'], getAllActiveKanban);
@@ -15,11 +18,21 @@ const DynamicRouter = () => {
   const transformRoutes = (routes) => {
     return routes.map((route) => {
       return {
-        path: `/kanban/${route.kanban_name}/${route.mapping_key}`,
-        element: <TestPage props={route} />,
+        path: `/kanban/${route.mapping_key}`,
+        element: <ActiveKanbanPage props={route} />,
       };
     });
   };
+
+  const transformInactiveRoutes = (routes)=>{
+    return routes.map((route) => {
+      return {
+        path: `/kanban/${route.mapping_key}`,
+        element: <InActiveKanbanPege kanbanMappingKey={route.mapping_key} />,
+      };
+    });
+  };
+  
   const router = createBrowserRouter(
     [
       {
@@ -37,12 +50,16 @@ const DynamicRouter = () => {
         ].concat(
           transformRoutes([
             ...kanbanData.activeData,
+            //...kanbanData.inactiveData,
+          ])
+        ).concat(
+          transformInactiveRoutes([
             ...kanbanData.inactiveData,
           ])
         ),
       },
     ],
-    { basename: "/" }
+    { basename: "/kanbansys" }
   );
 
   return <RouterProvider router={router} />;

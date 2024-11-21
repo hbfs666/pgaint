@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Chip, TextField, IconButton, useTheme, FormLabel } from '@mui/material';
+import { Box, Chip, TextField, IconButton, useTheme, FormLabel, Typography } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { useError } from "../context/ErrorHandlerContext";
 
@@ -24,7 +24,7 @@ const StationListEditor = ({ stations, onStationsChange }) => {
 
   return (
     <Box border={`1px solid ${theme.palette.divider}`} borderRadius={1} p={2} width="100%">
-         <FormLabel>Station List:</FormLabel>
+         <Typography>Station List:</Typography>
       <Box
         display="flex"
         flexWrap="nowrap"
@@ -66,7 +66,7 @@ const StationListEditor = ({ stations, onStationsChange }) => {
           variant="outlined"
           fullWidth
           InputProps={{ style: { color: theme.palette.text.primary } }}
-          InputLabelProps={{ style: { color: theme.palette.text.secondary } }}
+          //InputLabelProps={{ style: { color: theme.palette.text.secondary } }}
         />
         <IconButton color="primary" onClick={handleAddStation}>
           <AddCircle sx={{ color: theme.palette.mode === 'dark' ? 'lightgreen' : theme.palette.primary.main }}/>

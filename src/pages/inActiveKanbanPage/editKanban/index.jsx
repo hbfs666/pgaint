@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   TextField,
@@ -12,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { createKanban } from "../../../api/apiClientService";
+import { updateKanbanSetting,getKanbanSetting} from "../../../api/apiClientService";
 import { useError } from "../../../context/ErrorHandlerContext";
 import { useKanbanContext } from "../../../context/KanbanContext";
 
@@ -20,10 +21,10 @@ const rmaSites = process.env.REACT_APP_APP_RMASITE.split(",");
 const productTypes = process.env.REACT_APP_PRODUCT_TYPELIST.split(",");
 
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
+const EditKanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep, mappingKey,setOnError }) => {
   const showMessage = useError();
   const [formValues, setFormValues] = useState({
     kanbanName: "",
@@ -32,62 +33,94 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
     envType: "",
   });
 
-  const [buttonActive, setButtonActive] = useState(true);
+  const [buttonActive, setButtonActive] = useState(false);
+  const [updateButtonActive, setUpdateButtonActive] = useState(false);
 
   const theme = useTheme(); // Get the current theme
 
   const { reloadContext } = useKanbanContext();
-
-  // Use useMutation for form submission
-  const mutation = useMutation({
+  const history = useNavigate();
+  const getKanbanSettings = useMutation({
     mutationFn: () =>
-      createKanban(
-        formValues.kanbanName,
-        formValues.productType,
-        formValues.rmaSite,
-        "PRO"
+        getKanbanSetting(
+            mappingKey
       ),
     onMutate: () => {
       setButtonActive(false); // Disable the button while loading
     },
     onError: (error) => {
-      showMessage("Error in creating kanban: " + error.message, "error");
+      showMessage("Error in creating kanban: " + error.message +" "+ error.response?.data, "error");
       setButtonActive(true); // Re-enable the button if there's an error
+      setOnError(true)
     },
-    onSuccess: async(data) => {
+    onSuccess: (data) => {
       setButtonActive(false);
-      showMessage("Kanban created successfully", "success");
-      reloadContext();
+      data.mapping_key= mappingKey;
+      showMessage("Kanban Setting fetched successfully", "success");
+      //reloadContext();
       setKanbanRecord(data);
-      //sleep(400)
-      //setActiveStep(1);
+      setFormValues({
+        kanbanName: data.kanban_name,
+        productType: data.product_type,
+        rmaSite: data.rma_site,
+        envType: data.env_type,
+      });
+      setUpdateButtonActive(false)
     },
   });
 
+  const updateKanbanSettings = useMutation({
+    mutationFn: () =>
+        updateKanbanSetting(
+            mappingKey,
+            formValues.kanbanName,
+            formValues.productType,
+            formValues.rmaSite,
+            "PRO"
+        ),
+    onMutate: () => {
+        setButtonActive(false); // Disable the button while loading
+        },
+    onError: (error) => {
+        showMessage("Error in creating kanban: " + error.message +" "+ error.response?.data, "error");
+        setButtonActive(true); // Re-enable the button if there's an error
+    },
+    onSuccess: () => {
+        setButtonActive(false);
+        showMessage("Kanban Setting updated successfully", "success");
+        sleep(450)
+        reloadContext();
+        //history(`/kanban/`+formValues.kanbanName+`/`+mappingKey);
+        getKanbanSettings.mutate();
+    },
+    });
+
+
   useEffect(() => {
-    if (kanbanRecord != null) {
-      setFormValues({
-        kanbanName: kanbanRecord.kanban_name,
-        productType: kanbanRecord.product_type,
-        rmaSite: kanbanRecord.rma_site,
-        envType: kanbanRecord.env_type,
-      });
-      setButtonActive(false);
-    }
-  }, [kanbanRecord]);
+    if (mappingKey == "") return;
+    getKanbanSettings.mutate();
+    }, [mappingKey]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    setUpdateButtonActive(true);
     setFormValues({
       ...formValues,
       [name]: value,
     });
+    setButtonActive(true);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    mutation.mutate();
+    updateKanbanSettings.mutate();
   };
+
+//   useEffect(() => {
+//     if (!productTypes.includes(formValues.productType)) {
+//       productTypes.push(formValues.productType);
+//     }
+//   }, [formValues.productType]);
 
   return (
     <Box
@@ -102,12 +135,12 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
       }}
     >
       <Typography variant="h4" align="center" gutterBottom>
-        Create Kanban Information
+        Edit Kanban Information
       </Typography>
       <form onSubmit={handleSubmit} id="create-kanban">
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <FormControl fullWidth variant="outlined" disabled={!buttonActive}>
+            <FormControl fullWidth variant="outlined">
               <InputLabel
                 id="rmaSite-label"
                 style={{ color: theme.palette.text.secondary }}
@@ -150,7 +183,6 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
               name="kanbanName"
               value={formValues.kanbanName}
               onChange={handleChange}
-              disabled={!buttonActive}
               variant="outlined"
               id="kanbanName"
               InputProps={{
@@ -174,7 +206,7 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth variant="outlined" disabled={!buttonActive}>
+            <FormControl fullWidth variant="outlined">
               <InputLabel
                 id="productType-label"
                 style={{ color: theme.palette.text.secondary }}
@@ -202,6 +234,7 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
                   },
                 }}
               >
+                {!productTypes.includes(formValues.productType)?productTypes.push(formValues.productType):null}
                 {productTypes.map((site) => (
                   <MenuItem key={site} value={site}>
                     {site == "L11"
@@ -222,7 +255,7 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
               variant="contained"
               color="primary"
               fullWidth
-              disabled={!buttonActive}
+              disabled={!updateButtonActive}
               sx={{
                 backgroundColor:
                   theme.palette.mode === "dark" ? "#4caf50" : "#1976d2", // Button color based on mode
@@ -231,17 +264,16 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
                     theme.palette.mode === "dark" ? "#388e3c" : "#115293", // Button hover color based on mode
                   boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
                 },
-                display: !buttonActive ? "none" : "block",
+                
               }}
             >
-              Submit
+              Update
             </Button>
-
+            <Box m={1}/>
             <Button
               variant="contained"
               color="primary"
               fullWidth
-              disabled={buttonActive}
               onClick={() => setActiveStep(1)}
               sx={{
                 backgroundColor: "#4caf50", // Button color based on mode
@@ -249,7 +281,6 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
                   backgroundColor: theme.palette.mode === "#388e3c", // Button hover color based on mode
                   boxShadow: `0px 4px 6px ${theme.palette.primary.main}`, // Button shadow on hover
                 },
-                display: buttonActive ? "none" : "block",
               }}
             >
               Next
@@ -261,4 +292,4 @@ const KanbanForm = ({ setKanbanRecord, kanbanRecord, setActiveStep }) => {
   );
 };
 
-export default KanbanForm;
+export default EditKanbanForm;

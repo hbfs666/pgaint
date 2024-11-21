@@ -8,7 +8,7 @@ const LandingPage = () => {
   return (
     <Box>
       <Box m="20px">
-        <Header title="Welcome to dev home" subtitle=" ok" />
+        <Header title="Welcome Kanban Sys" />
       </Box>
       <Box height="50vh" width="60vw" ml={10}></Box>
     </Box>

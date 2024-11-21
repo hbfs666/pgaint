@@ -3,6 +3,7 @@ import { StopOutlined,PlayCircleOutlined } from "@ant-design/icons";
 // material-ui
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { Divider } from "@mui/material";
 
 // project import
 import NavGroup from './NavGroup';
@@ -18,7 +19,7 @@ const transInactiveformKanban = (datas) => {
       id: data.mapping_key.toString(), // Ensure id is a string
       title: data.kanban_name.toString(),
       type: "item",
-      url: `/kanban/${data.kanban_name}/${data.mapping_key}`,
+      url: `/kanban/${data.mapping_key}`,
       icon: incons.StopOutlined, // Ant Design Icon component
       iconColor:"red",
       breadcrumbs: true, // Assuming breadcrumbs is always true
@@ -31,7 +32,7 @@ const transInactiveformKanban = (datas) => {
       id: data.mapping_key.toString(), // Ensure id is a string
       title: data.kanban_name.toString(),
       type: "item",
-      url: `/kanban/${data.kanban_name}/${data.mapping_key}`,
+      url: `/kanban/${data.mapping_key}`,
       icon: incons.PlayCircleOutlined, // Ant Design Icon component
       iconColor:"green",
       breadcrumbs: true, // Assuming breadcrumbs is always true
@@ -56,7 +57,7 @@ export default function Navigation() {
         children: transActiveformKanban(kanbanData.activeData),
       };
 
-  const navGroups = [mainActive,mainInactive].map((item) => {
+  const navGroups = [mainActive,process.env.REACT_APP_MASTER_MODE?[]:mainInactive].map((item) => {
     switch (item.type) {
       case 'group':
         return <NavGroup key={item.id} item={item} />;
@@ -64,9 +65,8 @@ export default function Navigation() {
         return 
       default:
         return (
-          <Typography key={item.id} variant="h6" color="error" align="center">
-            Fix - Navigation Group
-          </Typography>
+          <Divider key={item.id} orientation="horizontal"/>
+
         );
     }
   });

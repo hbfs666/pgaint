@@ -20,7 +20,7 @@ const downMd = useMediaQuery(theme.breakpoints.down("md"));
             return (
               <Step key={label}>
                  <StepLabel
-                  StepIconComponent={() => null}  // This removes the index numbers
+                  //StepIconComponent={() => null}  // This removes the index numbers
                   sx={{
                     '& .MuiStepLabel-label': {
                       fontSize: isCurrentStep ? '1.2rem' : '1rem',
