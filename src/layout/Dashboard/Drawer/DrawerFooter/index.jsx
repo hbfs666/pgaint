@@ -35,8 +35,8 @@ export default function DrawerFooter() {
         component={Link}
         to="/addKanban"
         variant="contained"
-        disabled={process.env.REACT_APP_MASTER_MODE}
-        startIcon={<AddCircleOutlineIcon />}
+        disabled={process.env.REACT_APP_MASTER_MODE=="false"?true:false}
+        startIcon={process.env.REACT_APP_MASTER_MODE=="false"?null:<AddCircleOutlineIcon />}
         sx={{
           mb: 1,
           backgroundColor: theme.palette.mode === "dark" ? "#8bc34a" : "#1976d2",
@@ -50,7 +50,7 @@ export default function DrawerFooter() {
           },
         }}
       >
-        Add New Kanban
+        {process.env.REACT_APP_MASTER_MODE=="false"?"View Only Mode":"Add New Kanban"}
       </Button>
     </Box>
 

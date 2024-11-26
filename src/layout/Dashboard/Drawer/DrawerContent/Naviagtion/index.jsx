@@ -47,8 +47,8 @@ export default function Navigation() {
     const mainInactive = {
         id: "inactive_kanban",
         title: "Inactive Kanban",
-        type: "group",
-        children: transInactiveformKanban(kanbanData.inactiveData),
+        type: process.env.REACT_APP_MASTER_MODE=="false"?"non group":"group",
+        children: transInactiveformKanban(process.env.REACT_APP_MASTER_MODE=="false"?null:kanbanData.inactiveData),
       };
     const mainActive = {
         id: "active_kanban",
@@ -57,7 +57,7 @@ export default function Navigation() {
         children: transActiveformKanban(kanbanData.activeData),
       };
 
-  const navGroups = [mainActive,process.env.REACT_APP_MASTER_MODE?[]:mainInactive].map((item) => {
+  const navGroups = [mainActive,mainInactive].map((item) => {
     switch (item.type) {
       case 'group':
         return <NavGroup key={item.id} item={item} />;

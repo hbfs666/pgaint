@@ -28,7 +28,7 @@ const DynamicRouter = () => {
     return routes.map((route) => {
       return {
         path: `/kanban/${route.mapping_key}`,
-        element: <InActiveKanbanPege kanbanMappingKey={route.mapping_key} />,
+        element: process.env.REACT_APP_MASTER_MODE=="false"?<LandingPage/>:<InActiveKanbanPege kanbanMappingKey={route.mapping_key} />,
       };
     });
   };
@@ -45,7 +45,7 @@ const DynamicRouter = () => {
           },
           {
             path: "/addKanban",
-            element: <AddKanbanPage />,
+            element: process.env.REACT_APP_MASTER_MODE=="false"?<LandingPage/>:<AddKanbanPage />,
           },
         ].concat(
           transformRoutes([

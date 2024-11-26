@@ -22,6 +22,7 @@ export default function MainDrawer({ window }) {
     ) {
       return;
     }
+    setIsButtonVisible(false)
     setIsDrawerOpen(open);
   };
   useEffect(() => {
