@@ -205,7 +205,7 @@ export default function NavItem({ item, level = 1 }) {
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
         onClick={handleClick}
-        disabled={process.env.REACT_APP_MASTER_MODE}
+        disabled={process.env.REACT_APP_MASTER_MODE=="false"?true:false}
         >
           <MoreVertIcon />
         </IconButton>
