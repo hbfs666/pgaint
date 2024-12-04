@@ -26,7 +26,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export default function NavItem({ item, level = 1 }) {
+export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
   const {reloadContext}=useKanbanContext();
   const theme = useTheme();
   const { pathname } = useLocation();
@@ -170,6 +170,7 @@ export default function NavItem({ item, level = 1 }) {
       disabled={item.disabled}
       selected={isSelected}
       sx={listItemButtonStyles}
+      onClick={toggleDrawerFunc(false)}
     >
       {itemIcon && (
         <ListItemIcon sx={listItemIconStyles}>{itemIcon}</ListItemIcon>

@@ -5,11 +5,11 @@ import Navigation from './Naviagtion';
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
-export default function DrawerContent() {
+export default function DrawerContent({toggleDrawerFunc}) {
   return (
     <>
       <SimpleBar sx={{ '& .simplebar-content': { display: 'flex', flexDirection: 'column',} }}>
-        <Navigation/>
+        <Navigation toggleDrawerFunc={toggleDrawerFunc}/>
       </SimpleBar>
     </>
   );

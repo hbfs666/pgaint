@@ -33,7 +33,8 @@ const ActiveKanban = ({ props }) => {
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
   const showMessage = useError();
   const [rawJson, setRawJson] = useState(null);
-  const [showLoading, setLoading] = useState(true);
+  const [currentMappingKey, setCurrentMappingKey] = useState(null);
+  const [refreshLock, setRefreshLock] = useState(false);
   const [lastRefreshTime, setLastRefreshTime] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
@@ -44,9 +45,11 @@ const ActiveKanban = ({ props }) => {
   const toggleAutoRefreshAndWakeLock = () => {
     setAutoRefreshEnabled(!autoRefreshEnabled);
     setWakeLockEnabled(!wakeLockEnabled);
-    if (autoRefreshEnabled) {
+    if (!autoRefreshEnabled) {
+      setRefreshLock(false);
       showMessage("Auto Refresh Enabled", "success");
     } else {
+      setRefreshLock(true);
       showMessage("Auto Refresh Disabled", "info");
     }
   };
@@ -68,7 +71,7 @@ const ActiveKanban = ({ props }) => {
     },
   });
   useEffect(() => {
-    if (props.mapping_key) {
+    if (currentMappingKey != null && !refreshLock) {
       getData.mutate();
     }
 
@@ -80,7 +83,14 @@ const ActiveKanban = ({ props }) => {
     }, 10 * 60 * 1000); // Refresh every 10 minutes
 
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, [props.mapping_key, autoRefreshEnabled]);
+  }, [currentMappingKey, autoRefreshEnabled]);
+
+  useEffect(() => {
+    if (props.mapping_key && props.mapping_key !== currentMappingKey) {
+      setRefreshLock(false);
+      setCurrentMappingKey(props.mapping_key);
+    }
+  }, [props.mapping_key]);
 
   useEffect(() => {
     const today = new Date();
@@ -93,7 +103,7 @@ const ActiveKanban = ({ props }) => {
 
   return (
     <Box sx={{ padding: downSM ? "8px" : "16px" }}>
-      <Tooltip title="Toggle Auto-Refresh and Wake-Lock" arrow>
+      <Tooltip  arrow>
         {downSM ? (
           <IconButton
             onClick={toggleAutoRefreshAndWakeLock}
@@ -109,43 +119,50 @@ const ActiveKanban = ({ props }) => {
           </IconButton>
         ) : (
           <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            position: "fixed",  // Ensures the switch stays in the fixed position
-            top: 0,             // Aligns to the top
-            left: 0,            // Aligns to the left
-            //margin: "1px",     // Adds some margin from the edges for better visibility
-            //zIndex: 9999,       // Makes sure it's always on top of other elements
-            marginLeft: "8px",
-          }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between", // Ensures the space between items
+              position: "fixed", // Ensures the switch stays in the fixed position
+              top: -10, // Aligns to the top
+              left: 0, // Aligns to the left
+              width: "100%", // Makes the box take full width
+              padding: "8px", // Adds some padding for better visibility
+              //backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for better visibility
+            }}
           >
-            <Typography
+            <Box
               sx={{
-                color: "white",
-                marginRight: "8px",
-                fontWeight: 1000,
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              Auto Refresh
-              <Switch
-              checked={autoRefreshEnabled}
-              onChange={toggleAutoRefreshAndWakeLock}
-              sx={{
-                "& .MuiSwitch-thumb": {
-                  backgroundColor: autoRefreshEnabled ? "lightgreen" : "red",
-                  //animation: autoRefreshEnabled ? `${flash} 1s infinite` : "none",
-                },
-                "& .MuiSwitch-track": {
-                  backgroundColor: autoRefreshEnabled
-                    ? "lightgreen"
-                    : "lightcoral",
-                },
-              }}
-            />
-            </Typography>
+              <Typography
+                sx={{
+                  color: theme.palette.mode === "dark" ? "white" : "black",
+                  marginRight: "8px",
+                  fontWeight: 1000,
+                }}
+              >
+                {`Auto Refresh`}
+                <Switch
+                checked={autoRefreshEnabled}
+                onChange={toggleAutoRefreshAndWakeLock}
+                sx={{
+                  "& .MuiSwitch-thumb": {
+                    backgroundColor: autoRefreshEnabled ? "lightgreen" : "red",
+                  },
+                  "& .MuiSwitch-track": {
+                    backgroundColor: autoRefreshEnabled
+                      ? "green"
+                      : "red",
+                  },
+                }}
+              />
+              </Typography>
+              
+            </Box>
             <FullscreenButton />
-           
           </Box>
         )}
       </Tooltip>
