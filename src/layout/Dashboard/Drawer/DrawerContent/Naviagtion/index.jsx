@@ -42,7 +42,7 @@ const transInactiveformKanban = (datas) => {
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
-export default function Navigation() {
+export default function Navigation({toggleDrawerFunc}) {
     const kanbanData=useKanbanContext()
     const mainInactive = {
         id: "inactive_kanban",
@@ -60,7 +60,7 @@ export default function Navigation() {
   const navGroups = [mainActive,mainInactive].map((item) => {
     switch (item.type) {
       case 'group':
-        return <NavGroup key={item.id} item={item} />;
+        return <NavGroup key={item.id} item={item} toggleDrawerFunc={toggleDrawerFunc}/>;
       case 'Buttom':
         return 
       default:

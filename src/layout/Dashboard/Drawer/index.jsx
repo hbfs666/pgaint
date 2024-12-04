@@ -13,7 +13,7 @@ export default function MainDrawer({ window }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -22,34 +22,23 @@ export default function MainDrawer({ window }) {
     ) {
       return;
     }
-    setIsButtonVisible(false)
+    if (open) {
+      setIsButtonVisible(false);
+    } else {
+      setIsButtonVisible(true);
+    }
     setIsDrawerOpen(open);
   };
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      if (event.clientX < 50) {
-        setIsButtonVisible(true);
-      } else {
-        setIsButtonVisible(false);
-      }
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
   const drawerHeader = useMemo(
     () => <DrawerHeader open={!!isDrawerOpen} />,
     [isDrawerOpen]
   );
-  const drawerContent = useMemo(() => <DrawerContent />, []);
+  const drawerContent = useMemo(() => <DrawerContent toggleDrawerFunc={toggleDrawer}/>, []);
   const drawerFooter = useMemo(() => <DrawerFooter />, []);
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+   
   return (
     <div>
       {isButtonVisible && (
@@ -60,14 +49,21 @@ export default function MainDrawer({ window }) {
             position: "fixed",
             left: 0,
             top: "50%",
+            maxWidth: "1vw",
+            minHeight: "90vh",
             transform: "translateY(-50%)",
-            backgroundColor: colors.primary,
+            backgroundColor:
+              theme.palette.mode === "dark" ? "gray" : "lightgray",
             color: colors.primary,
             borderRadius: "0 4px 4px 0",
             zIndex: 1, // Ensure it stays on top
+            "&:hover": {
+              backgroundColor:
+                theme.palette.mode === "dark" ? "lightgray" : "gray",
+            },
           }}
         >
-          <MenuIcon />
+          <MenuIcon fontSize="small" />
         </IconButton>
       )}
       <Drawer
@@ -94,8 +90,8 @@ export default function MainDrawer({ window }) {
         }}
       >
         <Box>{drawerHeader}</Box>
-        <Box sx={{ overflowY: "auto",height:'100%'}}>{drawerContent}</Box>
-        <Box >{drawerFooter}</Box>
+        <Box sx={{ overflowY: "auto", height: "100%" }}>{drawerContent}</Box>
+        <Box>{drawerFooter}</Box>
       </Drawer>
     </div>
   );

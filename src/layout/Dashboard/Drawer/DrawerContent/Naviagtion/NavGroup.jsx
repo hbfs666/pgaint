@@ -8,7 +8,7 @@ import NavItem from './NavItem';
 // project import
 
 
-export default function NavGroup({ item }) {
+export default function NavGroup({ item,toggleDrawerFunc }) {
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
@@ -19,7 +19,7 @@ export default function NavGroup({ item }) {
           </Typography>
         );
       case 'item':
-        return <NavItem key={menuItem.id} item={menuItem} level={1} />;
+        return <NavItem key={menuItem.id} item={menuItem} level={1} toggleDrawerFunc={toggleDrawerFunc} />;
       default:
         return (
           <Typography key={menuItem.id} variant="h6" color="error" align="center">

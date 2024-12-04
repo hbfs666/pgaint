@@ -71,7 +71,9 @@ const ActiveKanbanBody = ({ BodyJson }) => {
           ...hourlyData,
           total: Object.values(hourlyData).reduce((sum, qty) => sum + qty, 0),
           highlight: record.highlight ? record.highlight : "N",
+          isCapacity:record.isCapacity,
           rowSpan: index === 0 ? group.rowSpan : 0,
+          isEndOfGroup: index === group.records.length - 1 ? true : false,
         };
         result.push(row);
       });
@@ -105,6 +107,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             backgroundColor:
               theme.palette.mode === "dark" ? "#2b2b2b" : "lightgray",
             color: theme.palette.mode === "dark" ? "white" : "black",
+            borderBottom:"solid 5px lightgreen",
           },
         };
       },
@@ -127,7 +130,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
       fixed: "left",
       onHeaderCell: () => {
         return {
-          style: { backgroundColor: "lightgreen", textAlign: "center",borderRight:theme.palette.mode === "dark" ? "solid black" : "solid white" },
+          style: { backgroundColor: "lightgreen", textAlign: "center",borderRight:theme.palette.mode === "dark" ? "solid black" : "solid white", },
         };
       },
       children: [
@@ -149,7 +152,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               style: {
                 backgroundColor:
                   theme.palette.mode === "dark" ? "black" : "white",
-                borderBottom: "solid 2px lightgreen",
+                borderBottom: "solid 5px lightgreen",
                 borderRight: "solid 2px lightgreen",
               },
             };
@@ -160,6 +163,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
           fixed: "left",
           render: (value, rowValue) => {
             const color =
+            rowValue.isCapacity===true?"darkorange":
               rowValue.highlight === "Y" && theme.palette.mode === "dark"
                 ? "yellow" // Use darkyellow if highlight is 'Y' and in dark mode
                 : rowValue.highlight === "Y" && theme.palette.mode === "light"
@@ -183,12 +187,13 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               </Typography>
             );
           },
-          onCell: () => {
+          onCell: (rowValue) => {
             return {
               style: {
                 backgroundColor:
                   theme.palette.mode === "dark" ? "black" : "white",
                 borderRight: "solid 2px lightgreen",
+                borderBottom:rowValue.isEndOfGroup?"solid 5px lightgreen":null,
               },
             };
           },
@@ -211,7 +216,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               style: {
                 backgroundColor:
                   theme.palette.mode === "dark" ? "black" : "white",
-                borderBottom: "solid 2px lightgreen",
+                borderBottom: "solid 5px lightgreen",
                 borderRight: "solid 2px lightgreen",
               },
             };
@@ -221,6 +226,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
           width: 90,
           render: (value, rowValue) => {
             const color =
+            rowValue.isCapacity===true?"darkorange":
               rowValue.highlight === "Y" && theme.palette.mode === "dark"
                 ? "yellow" // Use darkyellow if highlight is 'Y' and in dark mode
                 : rowValue.highlight === "Y" && theme.palette.mode === "light"
@@ -243,12 +249,13 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               </Typography>
             );
           },
-          onCell: () => {
+          onCell: (rowValue) => {
             return {
               style: {
                 backgroundColor:
                   theme.palette.mode === "dark" ? "black" : "white",
                 borderRight: "solid 2px lightgreen",
+                borderBottom:rowValue.isEndOfGroup?"solid 5px lightgreen":null,
               },
             };
           },
@@ -279,7 +286,8 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             style: {
               backgroundColor:
                 theme.palette.mode === "dark" ? "black" : "white",
-              borderBottom: "solid 2px lightgreen",
+              borderBottom: "solid 5px lightgreen",
+              //borderRight:"solid 1px lightgreen",
             },
           };
         },
@@ -288,6 +296,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
         width: 55,
         render: (value, rowValue) => {
           const color =
+            rowValue.isCapacity===true?"darkorange":
             rowValue.highlight === "Y" && theme.palette.mode === "dark"
               ? "yellow"
               : rowValue.highlight === "Y" && theme.palette.mode === "light"
@@ -308,7 +317,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             </Typography>
           );
         },
-        onCell: () => {
+        onCell: (rowValue) => {
           return {
             style: {
               backgroundColor:
@@ -319,6 +328,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
                   : theme.palette.mode === "dark"
                   ? "dashed 1px white"
                   : "dashed 1px black",
+                  borderBottom:rowValue.isEndOfGroup?"solid 5px lightgreen":null,
             },
           };
         },
@@ -337,6 +347,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
       fixed: "right",
       render: (value,rowValue) => {
         const color =
+        rowValue.isCapacity===true?"darkorange":
             rowValue.highlight === "Y" && theme.palette.mode === "dark"
               ? "yellow"
               : rowValue.highlight === "Y" && theme.palette.mode === "light"
@@ -356,10 +367,11 @@ const ActiveKanbanBody = ({ BodyJson }) => {
           {value <= 0 ? null : value}
         </Typography>)
       },
-      onCell: () => {
+      onCell: (rowValue) => {
         return {
           style: {
             backgroundColor: theme.palette.mode === "dark" ? "black" : "white",
+            borderBottom:rowValue.isEndOfGroup?"solid 5px lightgreen":null,
           },
         };
       },

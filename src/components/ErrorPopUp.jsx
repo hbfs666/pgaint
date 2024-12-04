@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Snackbar, Alert, LinearProgress, Box } from '@mui/material';
 
-const ErrorPopup = ({ open, message, severity, handleClose }) => {
+const ErrorPopup = ({ id, open, message, severity, handleClose, verticalOffset }) => {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const ErrorPopup = ({ open, message, severity, handleClose }) => {
       }, 30);
 
       const timeout = setTimeout(() => {
-        handleClose(); 
+        handleClose(id); 
       }, 3000);
 
       return () => {
@@ -22,16 +22,17 @@ const ErrorPopup = ({ open, message, severity, handleClose }) => {
         setProgress(100);
       };
     }
-  }, [open, handleClose]);
+  }, [open, handleClose, id]);
 
   return (
     <Snackbar
       open={open}
       autoHideDuration={3000}
-      onClose={handleClose}
+      onClose={() => handleClose(id)}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      sx={{ position: 'relative', top: verticalOffset, width: '100%', maxWidth: '90vw',marginTop:1 }}
     >
-      <Alert onClose={handleClose} severity={severity || 'error'} sx={{ width: '100%' }}>
+      <Alert onClose={() => handleClose(id)} severity={severity || 'error'} sx={{ width: '100%' }}>
         {message}
         <Box sx={{ width: '100%', mt: 1 }}>
           <LinearProgress variant="determinate" value={progress} />
@@ -42,4 +43,3 @@ const ErrorPopup = ({ open, message, severity, handleClose }) => {
 };
 
 export default ErrorPopup;
-
