@@ -40,7 +40,7 @@ export default function MainDrawer({ window }) {
     window !== undefined ? () => window().document.body : undefined;
    
   return (
-    <div>
+    <Box>
       {isButtonVisible ? (
         <IconButton
           onClick={toggleDrawer(true)}
@@ -94,7 +94,7 @@ export default function MainDrawer({ window }) {
         <Box sx={{ overflowY: "auto", height: "100%" }}>{drawerContent}</Box>
         <Box>{drawerFooter}</Box>
       </Drawer>
-    </div>
+    </Box>
   );
 }
 MainDrawer.propTypes = { window: PropTypes.func };
