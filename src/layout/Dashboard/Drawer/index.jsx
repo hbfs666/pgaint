@@ -41,7 +41,7 @@ export default function MainDrawer({ window }) {
    
   return (
     <div>
-      {isButtonVisible && (
+      {isButtonVisible ? (
         <IconButton
           onClick={toggleDrawer(true)}
           aria-label="Open navigation menu"
@@ -65,7 +65,7 @@ export default function MainDrawer({ window }) {
         >
           <MenuIcon fontSize="small" />
         </IconButton>
-      )}
+      ):null}
       <Drawer
         container={container}
         variant="temporary"
@@ -73,7 +73,7 @@ export default function MainDrawer({ window }) {
         open={isDrawerOpen}
         onClose={toggleDrawer(false)}
         ModalProps={{ keepMounted: true }}
-        aria-labelledby="navigation-drawer"
+        //aria-labelledby="navigation-drawer"
         sx={{
           display: "block",
           "& .MuiDrawer-paper": {
@@ -88,6 +88,7 @@ export default function MainDrawer({ window }) {
           backdropFilter: "blur(5px)",
           backgroundAttachment: "fixed",
         }}
+        {...(isDrawerOpen ? {} : { inert: "true" })}
       >
         <Box>{drawerHeader}</Box>
         <Box sx={{ overflowY: "auto", height: "100%" }}>{drawerContent}</Box>
