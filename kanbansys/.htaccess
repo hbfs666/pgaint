@@ -1,7 +1,0 @@
-<IfModule mod_rewrite.c>
-  Options -MultiViews
-  RewriteEngine On
-  RewriteBase /kanbansys
-  RewriteRule ^index\.html$ - [L]
-  RewriteRule . /index.html [L]
-</IfModule>
