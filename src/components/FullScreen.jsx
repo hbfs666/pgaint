@@ -36,7 +36,7 @@ function FullscreenButton() {
         borderColor: theme.palette.mode === "dark" ? "white" : "black",
         '&:hover': {
           borderColor: theme.palette.mode === "dark" ? "lightgreen" : "green",
-          backgroundColor: "transparent",
+          backgroundColor: theme.palette.mode === "dark" ? "black" : "white",
         },
       }}
     >

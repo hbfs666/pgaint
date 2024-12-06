@@ -50,7 +50,7 @@ export default function MainDrawer({ window }) {
             left: 0,
             top: "50%",
             maxWidth: "1vw",
-            minHeight: "90vh",
+            minHeight: "85vh",
             transform: "translateY(-50%)",
             backgroundColor:
               theme.palette.mode === "dark" ? "gray" : "lightgray",

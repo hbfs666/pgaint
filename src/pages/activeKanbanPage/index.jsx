@@ -108,11 +108,12 @@ const ActiveKanban = ({ props }) => {
           <IconButton
             onClick={toggleAutoRefreshAndWakeLock}
             sx={{
-              position: "absolute",
+              position: "fixed",
               top: downSM ? "1px" : "8px",
               left: downSM ? "-5px" : "8px",
               color: autoRefreshEnabled ? "green" : "red",
               animation: autoRefreshEnabled ? `${flash} 1s infinite` : "none",
+              zIndex:9999,
             }}
           >
             <CircleIcon />
@@ -128,7 +129,8 @@ const ActiveKanban = ({ props }) => {
               left: 0, // Aligns to the left
               width: "100%", // Makes the box take full width
               padding: "8px", // Adds some padding for better visibility
-              //backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for better visibility
+              backgroundColor: theme.palette.mode === "dark" ? "black" : "white", // Semi-transparent background for better visibility
+              zIndex: 1000, // Ensures the switch stays on top
             }}
           >
             <Box

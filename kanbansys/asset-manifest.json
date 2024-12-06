@@ -1,0 +1,34 @@
+{
+  "files": {
+    "main.css": "/kanbansys/static/css/main.9a71fbc5.css",
+    "main.js": "/kanbansys/static/js/main.00104f64.js",
+    "static/js/256.f661a6c9.chunk.js": "/kanbansys/static/js/256.f661a6c9.chunk.js",
+    "static/js/963.5649fd1f.chunk.js": "/kanbansys/static/js/963.5649fd1f.chunk.js",
+    "static/js/198.6a1d1cf5.chunk.js": "/kanbansys/static/js/198.6a1d1cf5.chunk.js",
+    "static/js/754.28c3eda6.chunk.js": "/kanbansys/static/js/754.28c3eda6.chunk.js",
+    "static/js/41.9be43246.chunk.js": "/kanbansys/static/js/41.9be43246.chunk.js",
+    "static/js/756.f8f6c679.chunk.js": "/kanbansys/static/js/756.f8f6c679.chunk.js",
+    "static/js/67.fcd39ff0.chunk.js": "/kanbansys/static/js/67.fcd39ff0.chunk.js",
+    "static/js/448.f6d9803c.chunk.js": "/kanbansys/static/js/448.f6d9803c.chunk.js",
+    "static/js/836.09636fa3.chunk.js": "/kanbansys/static/js/836.09636fa3.chunk.js",
+    "static/js/83.d3ff21cf.chunk.js": "/kanbansys/static/js/83.d3ff21cf.chunk.js",
+    "static/js/184.75c4a6f8.chunk.js": "/kanbansys/static/js/184.75c4a6f8.chunk.js",
+    "static/js/173.c60c404a.chunk.js": "/kanbansys/static/js/173.c60c404a.chunk.js",
+    "static/js/247.22c20a4e.chunk.js": "/kanbansys/static/js/247.22c20a4e.chunk.js",
+    "static/js/860.203f298d.chunk.js": "/kanbansys/static/js/860.203f298d.chunk.js",
+    "static/js/382.7e95d103.chunk.js": "/kanbansys/static/js/382.7e95d103.chunk.js",
+    "static/js/131.536dc407.chunk.js": "/kanbansys/static/js/131.536dc407.chunk.js",
+    "static/js/363.4efa01f3.chunk.js": "/kanbansys/static/js/363.4efa01f3.chunk.js",
+    "static/js/925.f5a07a99.chunk.js": "/kanbansys/static/js/925.f5a07a99.chunk.js",
+    "static/js/899.1b284263.chunk.js": "/kanbansys/static/js/899.1b284263.chunk.js",
+    "static/js/990.485e024b.chunk.js": "/kanbansys/static/js/990.485e024b.chunk.js",
+    "static/js/390.9c3f1872.chunk.js": "/kanbansys/static/js/390.9c3f1872.chunk.js",
+    "static/js/960.6d844e9d.chunk.js": "/kanbansys/static/js/960.6d844e9d.chunk.js",
+    "static/js/672.469531fc.chunk.js": "/kanbansys/static/js/672.469531fc.chunk.js",
+    "index.html": "/kanbansys/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.9a71fbc5.css",
+    "static/js/main.00104f64.js"
+  ]
+}
