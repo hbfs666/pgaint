@@ -40,6 +40,7 @@ const ActiveKanbanHeader = ({
   KanbanName,
   CurrentWorkingDay,
   LastRefreshTime,
+  isHistory,
 }) => {
   const showMessage = useError();
   const [inputQty, setInputQty] = useState(0);
@@ -113,7 +114,7 @@ const ActiveKanbanHeader = ({
                           theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
-                      Working Day
+                      {isHistory?`History`:`Working Day`}
                     </Typography>
                   </Grid>
                   <Grid item>
@@ -154,7 +155,7 @@ const ActiveKanbanHeader = ({
                           theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
-                      Last Update
+                      {`Last Update`}
                     </Typography>
                   </Grid>
                   <Grid item>
