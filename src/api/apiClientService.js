@@ -125,3 +125,8 @@ export const getKanbanRecord = async(mappingKey) =>{
     const response = await apiClient.get("/kanban/record/get?mappingKey="+mappingKey)
     return response.data
 }
+
+export const getKanbanHistoryRecord = async(mappingKey,date)=>{
+    const response = await apiClient.get("/kanban/record/history/get?mappingKey="+mappingKey+"&date="+date)
+    return response.data
+}

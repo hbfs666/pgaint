@@ -9,11 +9,16 @@ const useWakeLock = (enabled) => {
         if (enabled && 'wakeLock' in navigator) {
           const wakeLock = await navigator.wakeLock.request('screen');
           setWakeLock(wakeLock);
-          //Uncomment if you want to log when the wake lock is released
-          wakeLock.addEventListener('release', () => {
-            console.log('Wake Lock was released');
-          });
-          
+
+          const handleRelease = () => {
+            setWakeLock(null); // Reset the state when the lock is released
+          };
+
+          wakeLock.addEventListener('release', handleRelease);
+
+          return () => {
+            wakeLock.removeEventListener('release', handleRelease);
+          };
         }
       } catch (err) {
         console.error(`${err.name}, ${err.message}`);
@@ -26,7 +31,7 @@ const useWakeLock = (enabled) => {
       wakeLock.release().then(() => {
         setWakeLock(null);
         // Uncomment if you want to log when the wake lock is released
-        // console.log('Wake Lock was released');
+        console.log('Wake Lock was released');
       });
     }
 
@@ -37,7 +42,7 @@ const useWakeLock = (enabled) => {
         });
       }
     };
-  }, [enabled]);
+  }, [enabled, wakeLock]);
 
   return wakeLock;
 };
