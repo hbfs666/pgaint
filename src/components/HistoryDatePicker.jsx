@@ -56,7 +56,7 @@ const HistoryDatePicker = ({ isMobile, setChooseDate, setHistoryMode,isHistoryMo
         }}
       >
         <Typography sx={{ color: theme.palette.mode === "dark" ? "white" : "black",}}>
-          History Mode
+          History
         </Typography>
       </Button>
       <Dialog open={historyButtonVisible} onClose={() => handleDialogClose(false)}>

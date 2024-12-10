@@ -98,6 +98,12 @@ const ActiveKanban = ({ props }) => {
       setRawJson(data);
       showMessage("Kanban fetched successfully", "success");
       setLastRefreshTime(new Date().toLocaleTimeString());
+      const today = new Date();
+      const formattedDate = `${String(today.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
+      setCurrentDate(formattedDate);
     },
   });
 
