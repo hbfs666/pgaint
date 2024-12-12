@@ -3,12 +3,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Loadable from "../components/Loadable";
 import DashboardLayout from "../layout/Dashboard";
 import { useKanbanContext } from "../context/KanbanContext";
+import ActiveKanban from "../pages/activeKanbanPage";
 // lazy load Components
-const TestPage = Loadable(lazy(() => import("../pages/testPage")));
+//const TestPage = Loadable(lazy(() => import("../pages/testPage")));
 const LandingPage = Loadable(lazy(() => import("../pages/landingPage")));
 const AddKanbanPage = Loadable(lazy(() => import("../pages/addKanbanPage")));
 const InActiveKanbanPege = Loadable(lazy(()=> import("../pages/inActiveKanbanPage")))
-const ActiveKanbanPage = Loadable(lazy(()=> import("../pages/activeKanbanPage")))
+//const ActiveKanbanPage = Loadable(lazy(()=> import("../pages/activeKanbanPage")))
 
 
 const DynamicRouter = () => {
@@ -19,7 +20,7 @@ const DynamicRouter = () => {
     return routes.map((route) => {
       return {
         path: `/kanban/${route.mapping_key}`,
-        element: <ActiveKanbanPage props={route} />,
+        element: <ActiveKanban props={route} />,
       };
     });
   };
