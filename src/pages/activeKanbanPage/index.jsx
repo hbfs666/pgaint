@@ -116,7 +116,7 @@ const ActiveKanban = ({ props }) => {
       onSuccess: (data) => {
         setRawJson(data);
         showMessage("Kanban history fetched successfully", "success");
-        setLastRefreshTime(new Date().toLocaleTimeString());
+        setLastRefreshTime(data.historyUpdateTime);
       },
   })
 
