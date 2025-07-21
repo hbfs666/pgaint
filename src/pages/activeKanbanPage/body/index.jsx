@@ -27,6 +27,17 @@ const ActiveKanbanBody = ({ BodyJson }) => {
   const downLG = useMediaQuery(theme.breakpoints.down("lg"));
   const downXL = useMediaQuery(theme.breakpoints.down("xl"));
   const [data, setData] = useState(null);
+  const [zoomRatio, setZoomRatio] = useState(window.devicePixelRatio);
+
+useEffect(() => {
+  const handleZoom = () => {
+    setZoomRatio(window.devicePixelRatio);
+  };
+
+  window.addEventListener("resize", handleZoom);
+  return () => window.removeEventListener("resize", handleZoom);
+}, []);
+
   useEffect(() => {
     if (BodyJson) {
       setData(processBodyData(BodyJson));
@@ -101,14 +112,21 @@ const ActiveKanbanBody = ({ BodyJson }) => {
       //   flex:1,
       onCell: (_, index) => {
         const row = data[index];
+        const isStriped = index % 2 === 1;
         return {
           rowSpan: row.rowSpan,
           style: {
             backgroundColor:
-              theme.palette.mode === "dark" ? "#2b2b2b" : "lightgray",
+              theme.palette.mode === "dark"
+                ? isStriped
+                  ? "#222" 
+                  : "#000" 
+                : isStriped
+                ? "#f5f5f5" 
+                : "#fff", 
             color: theme.palette.mode === "dark" ? "white" : "black",
             borderBottom: "solid 5px lightgreen",
-          },
+          }
         };
       },
       render: (value) => (
@@ -119,6 +137,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             textOrientation: "sideways",
             writingMode: "vertical-lr",
             color: theme.palette.mode === "dark" ? "white" : "black",
+            fontSize: `${35 *(1 / zoomRatio)}px`
           }}
         >
           {value}
@@ -135,6 +154,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             textAlign: "center",
             borderRight:
               theme.palette.mode === "dark" ? "solid black" : "solid white",
+            fontSize: `${20 * (1 / zoomRatio)}px`
           },
         };
       },
@@ -147,6 +167,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               fontWeight={700}
               style={{
                 color: theme.palette.mode === "dark" ? "white" : "black",
+                fontSize: `${25 * (1 / zoomRatio)}px`,
               }}
             >
               Position
@@ -182,22 +203,30 @@ const ActiveKanbanBody = ({ BodyJson }) => {
 
             return (
               <Typography
-                textAlign={"left"}
-                fontWeight={700}
-                fontSize={14}
-                style={{
-                  color: color,
-                }}
-              >
-                {value}
-              </Typography>
+              textAlign="left"
+              fontWeight={600}
+              style={{
+                fontSize: `${25 *(1 / zoomRatio)}px`,
+                color: color,
+              }}
+            >
+              {value == 0 ? null : value}
+            </Typography>
+
             );
           },
-          onCell: (rowValue) => {
+          onCell: (rowValue, rowIndex) => {
+            const isStriped = rowIndex % 2 === 1;
             return {
               style: {
                 backgroundColor:
-                  theme.palette.mode === "dark" ? "black" : "white",
+                  theme.palette.mode === "dark"
+                  ? isStriped
+                    ? "#222"
+                    : "#000"
+                  : isStriped
+                  ? "#f5f5f5"
+                  : "#fff",
                 borderRight: "solid 2px lightgreen",
                 borderBottom: rowValue.isEndOfGroup
                   ? "solid 5px lightgreen"
@@ -214,6 +243,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               fontWeight={700}
               style={{
                 color: theme.palette.mode === "dark" ? "white" : "black",
+                fontSize: `${25 *(1 / zoomRatio)}px`,
               }}
             >
               Current
@@ -252,17 +282,25 @@ const ActiveKanbanBody = ({ BodyJson }) => {
                 fontWeight={600}
                 style={{
                   color: color,
+                  fontSize: `${40 *(1 / zoomRatio)}px`
                 }}
               >
                 {value <= 0 ? null : value}
               </Typography>
             );
           },
-          onCell: (rowValue) => {
+          onCell: (rowValue, rowIndex) => {
+            const isStriped = rowIndex % 2 === 1;
             return {
               style: {
                 backgroundColor:
-                  theme.palette.mode === "dark" ? "black" : "white",
+                  theme.palette.mode === "dark"
+                  ? isStriped
+                    ? "#222"
+                    : "#000"
+                  : isStriped
+                  ? "#f5f5f5"
+                  : "#fff",
                 borderRight: "solid 2px lightgreen",
                 borderBottom: rowValue.isEndOfGroup
                   ? "solid 5px lightgreen"
@@ -277,17 +315,21 @@ const ActiveKanbanBody = ({ BodyJson }) => {
       title: "Hourly QTY",
       onHeaderCell: () => {
         return {
-          style: { backgroundColor: "lightgreen", textAlign: "center" },
+          style: { backgroundColor: "lightgreen", textAlign: "center"
+          ,fontSize: `${20 * (1 / zoomRatio)}px`
+          },
         };
       },
-      children: [
+      children:[
         0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
       ].map((i) => ({
-        title: (
+        title:(
           <Typography
             textAlign="center"
             fontSize={15}
-            style={{ color: theme.palette.mode === "dark" ? "white" : "black" }}
+            style={{ color: theme.palette.mode === "dark" ? "white" : "black"
+              ,fontSize: `${25 * (1 / zoomRatio)}px`
+            }}
           >
             {i}
           </Typography>
@@ -323,17 +365,26 @@ const ActiveKanbanBody = ({ BodyJson }) => {
               textAlign="center"
               fontSize={20}
               fontWeight={600}
-              style={{ color: color }}
+              style={{ color: color,
+                fontSize: `${40 *(1 / zoomRatio)}px`
+              }}
             >
               {value == 0 ? null : value}
             </Typography>
           );
         },
-        onCell: (rowValue) => {
+        onCell: (rowValue, rowIndex) => {
+          const isStriped = rowIndex % 2 === 1;
           return {
             style: {
               backgroundColor:
-                theme.palette.mode === "dark" ? "black" : "white",
+                theme.palette.mode === "dark"
+                  ? isStriped
+                    ? "#222"
+                    : "#000"
+                  : isStriped
+                  ? "#f5f5f5"
+                  : "#fff",
               borderRight:
                 i == 23
                   ? "solid 2px lightgreen"
@@ -358,6 +409,7 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             textAlign: "center",
             color: theme.palette.mode === "dark" ? "white" : "black",
             borderBottom:"solid 5px lightgreen",
+            fontSize: `${40 *(1 / zoomRatio)}px`
           },
         };
       },
@@ -383,23 +435,32 @@ const ActiveKanbanBody = ({ BodyJson }) => {
             textAlign="center"
             fontSize={20}
             fontWeight={600}
-            style={{ color: color }}
+            style={{ color: color,
+              fontSize: `${40 *(1 / zoomRatio)}px`
+            }}
           >
             {value <= 0 ? null : value}
           </Typography>
         );
       },
-      onCell: (rowValue) => {
+      onCell: (rowValue, rowIndex) => {
+        const isStriped = rowIndex % 2 === 1;
         return {
           style: {
-            backgroundColor: theme.palette.mode === "dark" ? "black" : "white",
+            backgroundColor: theme.palette.mode === "dark"
+              ? isStriped
+                ? "#222"
+                : "#000"
+              : isStriped
+              ? "#f5f5f5"
+              : "#fff",
             borderBottom: rowValue.isEndOfGroup ? "solid 5px lightgreen" : null,
           },
         };
       },
     },
   ];
-  const [scrollHeight, setScrollHeight] = useState("80vh");
+  const [scrollHeight, setScrollHeight] = useState("100vh");
 
   const debounce = (func, delay) => {
     let timeout;
@@ -412,21 +473,21 @@ const ActiveKanbanBody = ({ BodyJson }) => {
   const calculateScrollHeight = () => {
     const height = window.innerHeight;
     if (height < 600) {
-      setScrollHeight("55vh");
+      setScrollHeight("100vh");
     } else if (height < 900) {
-      setScrollHeight("60vh");
+      setScrollHeight("100vh");
     } else if (height < 1200) {
-      setScrollHeight("60vh");
+      setScrollHeight("100vh");
     } else if (height < 1500) {
-      setScrollHeight("70vh");
+      setScrollHeight("100vh");
     } else {
       // Handle cases where height is greater than 1500
-      setScrollHeight("80vh"); // Or set a max percentage
+      setScrollHeight("100vh"); // Or set a max percentage
     }
   };
 
   useEffect(() => {
-    const debouncedResizeHandler = debounce(calculateScrollHeight, 80);
+    const debouncedResizeHandler = debounce(calculateScrollHeight, 100);
     calculateScrollHeight(); // Initial calculation
     window.addEventListener("resize", debouncedResizeHandler);
     return () => {

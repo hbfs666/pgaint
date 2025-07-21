@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -16,7 +16,10 @@ const DrawerHeaderStyled = styled(Box, { shouldForwardProp: (prop) => prop !== '
   borderRadius: theme.shape.borderRadius,
   borderBottom: '1px',
   justifyContent: open ? 'flex-start' : 'center',
-  paddingLeft: theme.spacing(open ? 3 : 0)
+  paddingLeft: theme.spacing(open ? 3 : 0),
+  minHeight: 72, // Increased header height for better fit
+  width: '100%', // Make background span full drawer width
+  boxSizing: 'border-box',
 }));
 
 
@@ -24,15 +27,26 @@ const DrawerHeaderStyled = styled(Box, { shouldForwardProp: (prop) => prop !== '
 
 export default function DrawerHeader({ open }) {
   const theme = useTheme();
+  const [zoomRatio, setZoomRatio] = useState(window.devicePixelRatio);
+
+  useEffect(() => {
+  const handleZoom = () => {
+    setZoomRatio(window.devicePixelRatio);
+  };
+
+  window.addEventListener("resize", handleZoom);
+  return () => window.removeEventListener("resize", handleZoom);
+  }, []);
+    
   return (
     <DrawerHeaderStyled theme={theme} open={!!open} >
-        {open?<Typography sx={{ width: open ? 'auto' : 35, height: 50 }} fontSize={'2rem'} fontWeight={"500"} >Kanban Sys</Typography>:null}
+        {open?<Typography sx={{ width: open ? 'auto' : 30, height: `${100 * (1 / zoomRatio)}px`, fontSize: `${50 *(1 / zoomRatio)}px`}}  fontWeight={"500"} align="center" >Kanban Sys</Typography>:null}
         {open?<Chip
           label={process.env.REACT_APP_RMA_SITE||"Error"}
           variant="outlined"
-          size="small"
+          size="large"
           color={process.env.REACT_APP_RMA_SITE?"secondary":"error"}
-          sx={{ mt: 0.5, ml: 0.5, fontSize: '1rem', height: 20, '& .MuiChip-label': { px: 0.5 } }}
+          sx={{ mt: 0.5, ml: 0.5, fontSize: `${25 *(1 / zoomRatio)}px`, height: `${35 *(1 / zoomRatio)}px`, '& .MuiChip-label': { px: `${5 *(1 / zoomRatio)}px` } }}
         />:null}
     </DrawerHeaderStyled>
   );

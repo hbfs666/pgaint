@@ -15,6 +15,23 @@ export default function MainDrawer({ window }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
 
+  const [zoomRatio, setZoomRatio] = useState(
+    typeof window !== "undefined" ? window.devicePixelRatio : 1
+  );
+
+  useEffect(() => {
+    const handleZoom = () => {
+      if (typeof window !== "undefined") {
+        setZoomRatio(window.devicePixelRatio);
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleZoom);
+      return () => window.removeEventListener("resize", handleZoom);
+    }
+  }, []);
+
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -73,12 +90,11 @@ export default function MainDrawer({ window }) {
         open={isDrawerOpen}
         onClose={toggleDrawer(false)}
         ModalProps={{ keepMounted: true }}
-        //aria-labelledby="navigation-drawer"
         sx={{
           display: "block",
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: 260,
+            width: `${800 * (1 / zoomRatio)}px`,
             borderRight: "1px solid",
             borderRightColor: "divider",
             backgroundImage: "none",

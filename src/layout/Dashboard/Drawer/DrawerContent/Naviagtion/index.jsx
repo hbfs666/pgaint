@@ -1,4 +1,5 @@
 import { useKanbanContext } from "../../../../../context/KanbanContext";
+import React, { useState, useEffect } from "react";
 import { StopOutlined,PlayCircleOutlined } from "@ant-design/icons";
 // material-ui
 import Typography from '@mui/material/Typography';
@@ -7,6 +8,7 @@ import { Divider } from "@mui/material";
 
 // project import
 import NavGroup from './NavGroup';
+
 
 const incons ={
     StopOutlined,
@@ -45,11 +47,23 @@ const transInactiveformKanban = (datas) => {
 export default function Navigation({toggleDrawerFunc}) {
     const kanbanData=useKanbanContext()
     const mainInactive = {
+    
         id: "inactive_kanban",
         title: "Inactive Kanban",
         type: process.env.REACT_APP_MASTER_MODE=="false"?"non group":"group",
         children: transInactiveformKanban(process.env.REACT_APP_MASTER_MODE=="false"?null:kanbanData.inactiveData),
       };
+    const [zoomRatio, setZoomRatio] = useState(window.devicePixelRatio);
+    
+    useEffect(() => {
+      const handleZoom = () => {
+        setZoomRatio(window.devicePixelRatio);
+      };
+    
+      window.addEventListener("resize", handleZoom);
+      return () => window.removeEventListener("resize", handleZoom);
+    }, []);
+
     const mainActive = {
         id: "active_kanban",
         title: "Active Kanban",
@@ -60,16 +74,17 @@ export default function Navigation({toggleDrawerFunc}) {
   const navGroups = [mainActive,mainInactive].map((item) => {
     switch (item.type) {
       case 'group':
-        return <NavGroup key={item.id} item={item} toggleDrawerFunc={toggleDrawerFunc}/>;
+        return <NavGroup key={item.id} item={item} toggleDrawerFunc={toggleDrawerFunc}
+        sx={{textsize:`${50 *(1 / zoomRatio)}px`}}/>;
       case 'Buttom':
         return 
       default:
         return (
-          <Divider key={item.id} orientation="horizontal"/>
+          <Divider sx={{textsize:`${50 *(1 / zoomRatio)}px`}} key={item.id} orientation="horizontal"/>
 
         );
     }
   });
 
-  return <Box sx={{ pt: 2 }}>{navGroups}</Box>;
+  return <Box sx={{ zIndex:999999, pt: 2 }}>{navGroups}</Box>;
 }

@@ -33,6 +33,16 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
   const showMessage = useError();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const [zoomRatio, setZoomRatio] = useState(window.devicePixelRatio);
+
+  useEffect(() => {
+  const handleZoom = () => {
+    setZoomRatio(window.devicePixelRatio);
+  };
+
+  window.addEventListener("resize", handleZoom);
+  return () => window.removeEventListener("resize", handleZoom);
+  }, []);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -55,7 +65,7 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
 
   // Get the icon component if available
   const Icon = item.icon;
-  const itemIcon = Icon ? <Icon style={{ fontSize: "1rem" }} /> : null;
+  const itemIcon = Icon ? <Icon style={{ fontSize: `${35 * (1 / zoomRatio)}px` }} /> : null;
 
   // Handle selected styles
   //const textColor = theme.palette.mode == "dark" && isSelected?'black':'text.primary';
@@ -107,10 +117,13 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
     minWidth: 28,
     color: iconColor,
     borderRadius: 1.5,
-    width: 36,
-    height: 36,
+    width: `${50 * (1 / zoomRatio)}px`, 
+    height: `${25 * (1 / zoomRatio)}px`,
     alignItems: "center",
     justifyContent: "center",
+    '& svg': {
+      fontSize: `${25 * (1 / zoomRatio)}px`, // Ensure SVG icons are bigger
+    },
     "&:hover": {
       bgcolor: "secondary.lighter",
     },
@@ -121,6 +134,8 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
       },
     }),
   };
+
+  
 
   // useEffect(() => {
   //   // Perform actions when the pathname changes
@@ -163,6 +178,7 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
         history("/")
     }
   })
+  
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
     <ListItemButton
@@ -177,7 +193,7 @@ export default function NavItem({ item, level = 1,toggleDrawerFunc }) {
       )}
       <ListItemText
         primary={
-          <Typography variant="h6" sx={{ color: textColor }}>
+          <Typography variant="h6" sx={{ color: textColor, fontSize: `${35 *(1 / zoomRatio)}px`, fontWeight: 500 }}>
             {item.title}
           </Typography>
         }

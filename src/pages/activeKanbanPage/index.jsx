@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   useMediaQuery,
@@ -37,6 +37,11 @@ const ActiveKanban = ({ props }) => {
   const [wakeLockEnabled, setWakeLockEnabled] = useState(true);
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
   const showMessage = useError();
+  const showBigMessage = (msg, type) => {
+    setBigMessage({ msg, type });
+    setTimeout(() => setBigMessage(null), 1800);
+  };
+  const [bigMessage, setBigMessage] = useState(null);
   const [rawJson, setRawJson] = useState(null);
   const [currentMappingKey, setCurrentMappingKey] = useState(null);
   const [refreshLock, setRefreshLock] = useState(false);
@@ -46,8 +51,21 @@ const ActiveKanban = ({ props }) => {
   const [historyMode, setHistoryMode] = useState(false);
   const [historyDate, setHistoryDate] = useState("");
 
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showProgress, setShowProgress] = useState(false);
+
   const theme = useTheme();
   const downSM = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [zoomRatio, setZoomRatio] = useState(window.devicePixelRatio);
+
+  useEffect(() => {
+    const handleZoom = () => {
+      setZoomRatio(window.devicePixelRatio);
+    };
+    window.addEventListener("resize", handleZoom);
+    return () => window.removeEventListener("resize", handleZoom);
+  }, []);
 
   // Toggle auto-refresh and wake-lock
   const toggleAutoRefreshAndWakeLock = () => {
@@ -55,48 +73,68 @@ const ActiveKanban = ({ props }) => {
     setWakeLockEnabled(!wakeLockEnabled);
     if (!autoRefreshEnabled) {
       setRefreshLock(false);
-      showMessage("Auto Refresh Enabled", "success");
+      showBigMessage("Auto Refresh Enabled", "success");
     } else {
       setRefreshLock(true);
-      showMessage("Auto Refresh Disabled", "info");
+      showBigMessage("Auto Refresh Disabled", "info");
     }
   };
 
-  const handleCloseFromHistory = ()=>{
-    setHistoryMode(false)
-    setHistoryDate('')
+  const handleCloseFromHistory = () => {
+    setHistoryMode(false);
+    setHistoryDate("");
     const today = new Date();
-      const formattedDate = `${String(today.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
-      setCurrentDate(formattedDate);
-      getData.mutate();
-  }
+    const formattedDate = `${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
+    setCurrentDate(formattedDate);
+    getData.mutate();
+  };
 
   useEffect(() => {
-    if (historyMode == true) {
+    if (historyMode === true) {
       setAutoRefreshEnabled(false);
       setWakeLockEnabled(false);
       setRefreshLock(true);
       setCurrentDate(historyDate);
-      getHistoryData.mutate()
+      getHistoryData.mutate();
     }
-  }, [historyMode,historyDate]);
+  }, [historyMode, historyDate]);
 
   // Handle wake-lock
   useWakeLock(wakeLockEnabled);
 
+  const startProgressBar = () => {
+    setShowProgress(true);
+    setLoadingProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 20;
+      if (progress >= 100) {
+        setLoadingProgress(100);
+        clearInterval(interval);
+        setTimeout(() => setShowProgress(false), 400);
+      } else {
+        setLoadingProgress(progress);
+      }
+    }, 120);
+  };
+
+  // Trigger progress bar on data fetch
   const getData = useMutation({
-    mutationFn: () => getKanbanRecord(props.mapping_key),
+    mutationFn: () => {
+      startProgressBar();
+      return getKanbanRecord(props.mapping_key);
+    },
     onMutate: () => {},
     onError: (error) => {
-      showMessage("Error getting kanban : " + error.message, "error");
+      showBigMessage("Error getting kanban : " + error.message, "error");
       setRawJson(null);
     },
     onSuccess: (data) => {
       setRawJson(data);
-      showMessage("Kanban fetched successfully", "success");
+      showBigMessage("Kanban fetched successfully", "success");
       setLastRefreshTime(new Date().toLocaleTimeString());
       const today = new Date();
       const formattedDate = `${String(today.getMonth() + 1).padStart(
@@ -104,25 +142,26 @@ const ActiveKanban = ({ props }) => {
         "0"
       )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
       setCurrentDate(formattedDate);
+      //triggerEmoji();
     },
   });
 
-  const getHistoryData=useMutation({
-    mutationFn:()=>getKanbanHistoryRecord(props.mapping_key,historyDate),
+  const getHistoryData = useMutation({
+    mutationFn: () => getKanbanHistoryRecord(props.mapping_key, historyDate),
     onError: (error) => {
-        showMessage("Error getting kanban history: " + error.message, "error");
-        setRawJson(null);
-      },
-      onSuccess: (data) => {
-        setRawJson(data);
-        showMessage("Kanban history fetched successfully", "success");
-        setLastRefreshTime(data.historyUpdateTime);
-      },
-  })
+      showBigMessage("Error getting kanban history: " + error.message, "error");
+      setRawJson(null);
+    },
+    onSuccess: (data) => {
+      setRawJson(data);
+      showBigMessage("Kanban history fetched successfully", "success");
+      setLastRefreshTime(data.historyUpdateTime);
+    },
+  });
 
   useEffect(() => {
     if (currentMappingKey != null && !refreshLock) {
-        setHistoryMode(false)
+      setHistoryMode(false);
       getData.mutate();
     }
 
@@ -133,7 +172,7 @@ const ActiveKanban = ({ props }) => {
       }
     }, 10 * 60 * 1000); // Refresh every 10 minutes
 
-    return () => clearInterval(interval); // Cleanup on component unmount
+    return () => clearInterval(interval);
   }, [currentMappingKey, autoRefreshEnabled]);
 
   useEffect(() => {
@@ -151,9 +190,71 @@ const ActiveKanban = ({ props }) => {
     )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
     setCurrentDate(formattedDate);
   }, []);
-
+  
+  useEffect(() => {
+    const today = new Date();
+  })
   return (
-    <Box sx={{ padding: downSM ? "8px" : "16px" }}>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        padding: downSM ? "8px" : "16px",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        position: "relative", 
+        paddingTop: "590px",
+      }}
+    >
+      {showProgress && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "6px",
+            background: theme.palette.mode === "dark" ? "#222" : "#eee",
+            zIndex: 99999,
+            transition: "opacity 0.4s",
+            opacity: showProgress ? 1 : 0,
+            pointerEvents: showProgress ? "auto" : "none",
+          }}
+        >
+          <Box
+            sx={{
+              width: `${loadingProgress}%`,
+              height: "100%",
+              background: "linear-gradient(90deg, #90ee90, #00bcd4)",
+              transition: "width 0.2s",
+            }}
+          />
+        </Box>
+      )}
+      {bigMessage && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: downSM ? 80 : 40,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: bigMessage.type === "error" ? "#ff8a80" : "#90ee90",
+            color: bigMessage.type === "error" ? "#b71c1c" : "#00695c",
+            fontSize: `${30 * (1 / zoomRatio)}px`,
+            fontWeight: 900,
+            px: 4,
+            py: 2,
+            borderRadius: 3,
+            boxShadow: 3,
+            zIndex: 100000,
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          {bigMessage.msg}
+        </Box>
+      )}
       <Tooltip arrow>
         {downSM ? (
           <IconButton
@@ -165,30 +266,34 @@ const ActiveKanban = ({ props }) => {
               color: autoRefreshEnabled ? "green" : "red",
               animation: autoRefreshEnabled ? `${flash} 1s infinite` : "none",
               zIndex: 9999,
+              width: "56px",
+              height: "56px",
+              padding: 0,
             }}
           >
-            <CircleIcon />
+            <CircleIcon sx={{ fontSize: 40 }} />
           </IconButton>
         ) : (
           <Box
             sx={{
-              display: "flex",
+              display: "fixed",
+              height: `${50 * (1 / zoomRatio)}px`,
               alignItems: "center",
-              justifyContent: "space-between", // Ensures the space between items
-              position: "fixed", // Ensures the switch stays in the fixed position
-              top: -10, // Aligns to the top
-              left: 0, // Aligns to the left
-              width: "100%", // Makes the box take full width
-              padding: "8px", // Adds some padding for better visibility
+              justifyContent: "space-between",
+              position: "relative",
+              top: 0,
+              left: 0,
+              width: "100%",
+              padding: "8px",
               backgroundColor:
-                theme.palette.mode === "dark" ? "black" : "white", // Semi-transparent background for better visibility
-              zIndex: 1000, // Ensures the switch stays on top
+                theme.palette.mode === "dark" ? "black" : "white",
+              zIndex: 1,
             }}
           >
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: "center",  
               }}
             >
               <Typography
@@ -196,23 +301,34 @@ const ActiveKanban = ({ props }) => {
                   color: theme.palette.mode === "dark" ? "white" : "black",
                   marginRight: "8px",
                   fontWeight: 1000,
+                  fontSize: `${25 * (1 / zoomRatio)}px`,
                 }}
               >
                 {`Auto Refresh`}
-                <Switch
-                  checked={autoRefreshEnabled}
-                  onChange={toggleAutoRefreshAndWakeLock}
+                <Box
                   sx={{
-                    "& .MuiSwitch-thumb": {
-                      backgroundColor: autoRefreshEnabled
-                        ? "lightgreen"
-                        : "red",
-                    },
-                    "& .MuiSwitch-track": {
-                      backgroundColor: autoRefreshEnabled ? "green" : "red",
-                    },
+                    transform: `scale(${ 2 * (1 / zoomRatio)})`,
+                    transformOrigin: "left center",
+                    display: "inline-block",
                   }}
-                />
+                >
+                  <Switch
+                    checked={autoRefreshEnabled}
+                    onChange={toggleAutoRefreshAndWakeLock}
+                    sx={{
+                      marginLeft: `${2 * (1 / zoomRatio)}px`,
+                      marginRight: `${150 * (1 / zoomRatio)}px`,
+                      marginTop: `${-5 * (1 / zoomRatio)}px`,
+                      "& .MuiSwitch-thumb": {
+                        backgroundColor: autoRefreshEnabled ? "lightgreen" : "red",
+                      },
+                      "& .MuiSwitch-track": {
+                        backgroundColor: autoRefreshEnabled ? "#90ee90" : "#ff8a80",
+                        opacity: 1,
+                      },
+                    }}
+                  />
+                </Box>
               </Typography>
               <HistoryDatePicker
                 isMobile={false}
@@ -221,8 +337,16 @@ const ActiveKanban = ({ props }) => {
                 isHistoryMode={historyMode}
               />
               {historyMode ? (
-                <IconButton onClick={handleCloseFromHistory}>
-                  <CloseIcon fontSize="small" />
+                <IconButton
+                  onClick={handleCloseFromHistory}
+                >
+                  <CloseIcon sx={{
+                    height: `${30 * (1 / zoomRatio)}px`,
+                    width: `${30 * (1 / zoomRatio)}px`,
+                    marginLeft: `${10 * (1 / zoomRatio)}px`,
+                    marginRight: `${10 * (1 / zoomRatio)}px`,
+                    fill: theme.palette.mode === "dark" ? "white" : "black"
+                  }}/>
                 </IconButton>
               ) : null}
             </Box>
@@ -230,34 +354,43 @@ const ActiveKanban = ({ props }) => {
           </Box>
         )}
       </Tooltip>
-      <Grid
-        container
-        direction="column"
-        spacing={0.2}
-        alignItems="center"
-        justifyContent="center"
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflow: "auto",
+          marginTop: "8px",
+          min: 0,
+        }}
       >
-        <Grid item width="100%">
-          {rawJson && rawJson.header ? (
-            <ActiveKanbanHeader
-              HeaderJson={rawJson.header}
-              KanbanName={props.kanban_name}
-              CurrentWorkingDay={currentDate}
-              LastRefreshTime={lastRefreshTime}
-              isHistory={historyMode}
-            />
-          ) : (
-            <SkeletonCard />
-          )}
+        <Grid
+          container
+          direction="column"
+          spacing={0.2}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Grid item width="100%">
+            {rawJson && rawJson.header ? (
+              <ActiveKanbanHeader
+                HeaderJson={rawJson.header}
+                KanbanName={props.kanban_name}
+                CurrentWorkingDay={currentDate}
+                LastRefreshTime={lastRefreshTime}
+                isHistory={historyMode}
+              />
+            ) : (
+              <SkeletonCard />
+            )}
+          </Grid>
+          <Grid item width="100%">
+            {rawJson && rawJson.body ? (
+              <ActiveKanbanBody BodyJson={rawJson.body} />
+            ) : (
+              <SkeletonBody />
+            )}
+          </Grid>
         </Grid>
-        <Grid item width="100%" maxHeight="80vh">
-          {rawJson && rawJson.body ? (
-            <ActiveKanbanBody BodyJson={rawJson.body} />
-          ) : (
-            <SkeletonBody />
-          )}
-        </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 };
