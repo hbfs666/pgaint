@@ -108,22 +108,14 @@ useEffect(() => {
       dataIndex: "group_name",
       key: "group_name",
       //width: 20,
-      width: downSM ? 55 : 40,
+      width: downSM ? 55 : 45,
       //   flex:1,
       onCell: (_, index) => {
         const row = data[index];
-        const isStriped = index % 2 === 1;
         return {
           rowSpan: row.rowSpan,
           style: {
-            backgroundColor:
-              theme.palette.mode === "dark"
-                ? isStriped
-                  ? "#222" 
-                  : "#000" 
-                : isStriped
-                ? "#f5f5f5" 
-                : "#fff", 
+            backgroundColor: theme.palette.mode === "dark" ? "#000" : "#fff",
             color: theme.palette.mode === "dark" ? "white" : "black",
             borderBottom: "solid 5px lightgreen",
           }
@@ -206,10 +198,17 @@ useEffect(() => {
               textAlign="left"
               fontWeight={600}
               style={{
-                fontSize: `${25 *(1 / zoomRatio)}px`,
+                fontSize: `${30 *(1 / zoomRatio)}px`,
                 color: color,
+                width: "auto",
+                minWidth: 0,
+                maxWidth: "100%",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "inline-block"
               }}
-            >
+              >
               {value == 0 ? null : value}
             </Typography>
 
@@ -282,7 +281,7 @@ useEffect(() => {
                 fontWeight={600}
                 style={{
                   color: color,
-                  fontSize: `${40 *(1 / zoomRatio)}px`
+                  fontSize: `${45 *(1 / zoomRatio)}px`
                 }}
               >
                 {value <= 0 ? null : value}
@@ -366,7 +365,7 @@ useEffect(() => {
               fontSize={20}
               fontWeight={600}
               style={{ color: color,
-                fontSize: `${40 *(1 / zoomRatio)}px`
+                fontSize: `${45 *(1 / zoomRatio)}px`
               }}
             >
               {value == 0 ? null : value}
@@ -409,12 +408,12 @@ useEffect(() => {
             textAlign: "center",
             color: theme.palette.mode === "dark" ? "white" : "black",
             borderBottom:"solid 5px lightgreen",
-            fontSize: `${40 *(1 / zoomRatio)}px`
+            fontSize: `${45 *(1 / zoomRatio)}px`
           },
         };
       },
       key: "total",
-      width: 50,
+      width: 45,
       fixed: "right",
       render: (value, rowValue) => {
         const color =
@@ -436,7 +435,7 @@ useEffect(() => {
             fontSize={20}
             fontWeight={600}
             style={{ color: color,
-              fontSize: `${40 *(1 / zoomRatio)}px`
+              fontSize: `${45 *(1 / zoomRatio)}px`
             }}
           >
             {value <= 0 ? null : value}
@@ -478,10 +477,10 @@ useEffect(() => {
       setScrollHeight("100vh");
     } else if (height < 1200) {
       setScrollHeight("100vh");
-    } else if (height < 1500) {
+    } else if (height < 1450) {
       setScrollHeight("100vh");
     } else {
-      // Handle cases where height is greater than 1500
+      // Handle cases where height is greater than 1450
       setScrollHeight("100vh"); // Or set a max percentage
     }
   };
