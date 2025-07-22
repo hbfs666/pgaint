@@ -96,40 +96,55 @@ useEffect(() => {
       onHeaderCell: () => {
         return {
           style: {
-            backgroundColor:
-              theme.palette.mode === "dark" ? "#2b2b2b" : "lightgray",
+            backgroundColor: theme.palette.mode === "dark" ? "#1a237e" : "#e3e6fa", // distinct blue for leftmost column
             textAlign: "center",
-            broderRight: "none",
-            borderBottom: "solid 5px lightgreen",
+            borderRight: "none",
+            borderBottom: "solid 5px #43a047",
+            color: theme.palette.mode === "dark" ? "#fff" : "#1a237e",
+            fontWeight: 900,
+            fontSize: `${22 * (1 / zoomRatio)}px`,
+            letterSpacing: 1.2,
+            maxWidth: 90,
           },
         };
       },
       //fixed: "left",
       dataIndex: "group_name",
       key: "group_name",
-      //width: 20,
-      width: downSM ? 55 : 45,
-      //   flex:1,
+      width: 90, // use maxWidth instead of minimal width
       onCell: (_, index) => {
         const row = data[index];
         return {
           rowSpan: row.rowSpan,
           style: {
-            backgroundColor: theme.palette.mode === "dark" ? "#000" : "#fff",
-            color: theme.palette.mode === "dark" ? "white" : "black",
-            borderBottom: "solid 5px lightgreen",
+            backgroundColor: theme.palette.mode === "dark" ? "#232b4d" : "#e3e6fa", // match header, distinct from rest
+            color: theme.palette.mode === "dark" ? "#fff" : "#1a237e",
+            borderBottom: "solid 5px #43a047",
+            fontWeight: 800,
+            fontSize: `${32 * (1 / zoomRatio)}px`,
+            maxWidth: 90,
+            whiteSpace: 'nowrap',
+            padding: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }
         };
       },
       render: (value) => (
         <Typography
-          fontSize={downSM ? "0.8rem" : "1rem"}
-          fontWeight={700}
+          fontSize={downSM ? "1.1rem" : "1.3rem"}
+          fontWeight={900}
           style={{
             textOrientation: "sideways",
             writingMode: "vertical-lr",
-            color: theme.palette.mode === "dark" ? "white" : "black",
-            fontSize: `${35 *(1 / zoomRatio)}px`
+            color: theme.palette.mode === "dark" ? "#fff" : "#1a237e",
+            fontSize: `${38 *(1 / zoomRatio)}px`,
+            letterSpacing: 1.2,
+            maxWidth: 90,
+            whiteSpace: 'nowrap',
+            padding: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
           {value}
@@ -142,11 +157,13 @@ useEffect(() => {
       onHeaderCell: () => {
         return {
           style: {
-            backgroundColor: "lightgreen",
+            backgroundColor: "#43a047", // high contrast green
             textAlign: "center",
-            borderRight:
-              theme.palette.mode === "dark" ? "solid black" : "solid white",
-            fontSize: `${20 * (1 / zoomRatio)}px`
+            borderRight: theme.palette.mode === "dark" ? "solid black" : "solid white",
+            fontSize: `${22 * (1 / zoomRatio)}px`,
+            color: "#fff",
+            fontWeight: 900,
+            letterSpacing: 1.2,
           },
         };
       },
@@ -155,11 +172,12 @@ useEffect(() => {
           title: (
             <Typography
               textAlign="center"
-              fontSize={15}
-              fontWeight={700}
+              fontSize={18}
+              fontWeight={900}
               style={{
-                color: theme.palette.mode === "dark" ? "white" : "black",
-                fontSize: `${25 * (1 / zoomRatio)}px`,
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontSize: `${28 * (1 / zoomRatio)}px`,
+                letterSpacing: 1.2,
               }}
             >
               Position
@@ -168,88 +186,81 @@ useEffect(() => {
           onHeaderCell: () => {
             return {
               style: {
-                backgroundColor:
-                  theme.palette.mode === "dark" ? "black" : "white",
-                borderBottom: "solid 5px lightgreen",
-                borderRight: "solid 2px lightgreen",
+                backgroundColor: theme.palette.mode === "dark" ? "#2a3b4d" : "#e3f6fd", // soft blue for summary
+                borderBottom: "solid 5px #43a047",
+                borderRight: "solid 2px #43a047",
                 padding: 0,
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontWeight: 900,
+                fontSize: `${22 * (1 / zoomRatio)}px`,
               },
             };
           },
           dataIndex: "category_name",
           key: "category_name",
-          width: '1%', // Let AntD auto-size to content
-          onCell: () => ({
-            style: {
-              whiteSpace: 'nowrap',
-              padding: '0 4px',
-              textAlign: 'center',
-              backgroundColor: theme.palette.mode === "dark" ? "black" : "white",
-              borderBottom: "solid 5px lightgreen",
-              borderRight: "solid 2px lightgreen",
-            },
-          }),
+          width: '1%',
+          onCell: (rowValue, rowIndex) => {
+            const isStriped = rowIndex % 2 === 1;
+            return {
+              style: {
+                whiteSpace: 'nowrap',
+                padding: '0 4px',
+                textAlign: 'center',
+                backgroundColor: theme.palette.mode === "dark"
+                  ? isStriped ? "#395b7a" : "#2a3b4d"
+                  : isStriped ? "#e3f6fd" : "#b3e5fc",
+                borderBottom: "solid 5px #43a047",
+                borderRight: "solid 2px #43a047",
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontWeight: 800,
+                fontSize: `${28 * (1 / zoomRatio)}px`,
+              },
+            };
+          },
           render: (value, rowValue) => {
             const color =
               rowValue.isCapacity === true
-                ? "darkorange"
+                ? "#ff9800"
                 : rowValue.highlight === "Y" && theme.palette.mode === "dark"
-                ? "yellow"
+                ? "#fff176"
                 : rowValue.highlight === "Y" && theme.palette.mode === "light"
-                ? "darkorange"
+                ? "#ff9800"
                 : rowValue.highlight === undefined || rowValue.highlight !== "Y"
                 ? theme.palette.mode === "dark"
-                  ? "white"
-                  : "black"
-                : "black";
+                  ? "#fff"
+                  : "#111"
+                : "#111";
 
             return (
               <Typography
                 textAlign="left"
-                fontWeight={600}
+                fontWeight={900}
                 style={{
-                  fontSize: `${30 *(1 / zoomRatio)}px`,
+                  fontSize: `${32 *(1 / zoomRatio)}px`,
                   color: color,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   padding: 0,
                   margin: 0,
+                  letterSpacing: 1.1,
                 }}
               >
                 {value == 0 ? null : value}
               </Typography>
             );
           },
-          onCell: (rowValue, rowIndex) => {
-            const isStriped = rowIndex % 2 === 1;
-            return {
-              style: {
-                backgroundColor:
-                  theme.palette.mode === "dark"
-                  ? isStriped
-                    ? "#222"
-                    : "#000"
-                  : isStriped
-                  ? "#f5f5f5"
-                  : "#fff",
-                borderRight: "solid 2px lightgreen",
-                borderBottom: rowValue.isEndOfGroup
-                  ? "solid 5px lightgreen"
-                  : null,
-              },
-            };
-          },
         },
         {
           title: (
             <Typography
               textAlign="center"
-              fontSize={15}
-              fontWeight={700}
+              fontSize={18}
+              fontWeight={900}
               style={{
-                color: theme.palette.mode === "dark" ? "white" : "black",
-                fontSize: `${25 *(1 / zoomRatio)}px`,
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontSize: `${28 * (1 / zoomRatio)}px`,
+                letterSpacing: 1.2,
               }}
             >
               Current
@@ -258,10 +269,12 @@ useEffect(() => {
           onHeaderCell: () => {
             return {
               style: {
-                backgroundColor:
-                  theme.palette.mode === "dark" ? "black" : "white",
-                borderBottom: "solid 5px lightgreen",
-                borderRight: "solid 2px lightgreen",
+                backgroundColor: theme.palette.mode === "dark" ? "#2a3b4d" : "#e3f6fd",
+                borderBottom: "solid 5px #43a047",
+                borderRight: "solid 2px #43a047",
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontWeight: 900,
+                fontSize: `${22 * (1 / zoomRatio)}px`,
               },
             };
           },
@@ -271,24 +284,24 @@ useEffect(() => {
           render: (value, rowValue) => {
             const color =
               rowValue.isCapacity === true
-                ? "darkorange"
-                : rowValue.highlight === "Y" && theme.palette.mode === "dark"
-                ? "yellow" // Use darkyellow if highlight is 'Y' and in dark mode
+                ? "#ff9800"
+                : rowValue.highlight === "Y" && theme.palette.mode === "dark" 
+                ? "#fff176"
                 : rowValue.highlight === "Y" && theme.palette.mode === "light"
-                ? "darkorange" // Use orange if highlight is 'Y' and in light mode
+                ? "#ff9800"
                 : rowValue.highlight === undefined || rowValue.highlight !== "Y"
                 ? theme.palette.mode === "dark"
-                  ? "white" // Use white if highlight is not 'Y' and dark mode
-                  : "black" // Use black if highlight is not 'Y' and light mode
-                : "black"; // Default to black if rowValue.highlight is undefined or doesn't match 'Y'
+                  ? "#fff"
+                  : "#111"
+                : "#111";
             return value == -1 ? null : (
               <Typography
                 textAlign={"center"}
-                fontSize={20}
-                fontWeight={600}
+                fontWeight={900}
                 style={{
                   color: color,
-                  fontSize: `${45 *(1 / zoomRatio)}px`
+                  fontSize: `${42 *(1 / zoomRatio)}px`,
+                  letterSpacing: 1.1,
                 }}
               >
                 {value <= 0 ? null : value}
@@ -299,18 +312,16 @@ useEffect(() => {
             const isStriped = rowIndex % 2 === 1;
             return {
               style: {
-                backgroundColor:
-                  theme.palette.mode === "dark"
-                  ? isStriped
-                    ? "#222"
-                    : "#000"
-                  : isStriped
-                  ? "#f5f5f5"
-                  : "#fff",
-                borderRight: "solid 2px lightgreen",
+                backgroundColor: theme.palette.mode === "dark"
+                  ? isStriped ? "#395b7a" : "#2a3b4d"
+                  : isStriped ? "#e3f6fd" : "#b3e5fc",
+                borderRight: "solid 2px #43a047",
                 borderBottom: rowValue.isEndOfGroup
-                  ? "solid 5px lightgreen"
+                  ? "solid 5px #43a047"
                   : null,
+                color: theme.palette.mode === "dark" ? "#b3e5fc" : "#1976d2",
+                fontWeight: 800,
+                fontSize: `${28 * (1 / zoomRatio)}px`,
               },
             };
           },
@@ -505,17 +516,20 @@ useEffect(() => {
   //const scrollHeight = downSM ? "60vh" : downMD ? "55vh" : downLG ? "60vh" : "65vh";
   return (
     <DelayedRender Skeleton={SkeletonBody}>
-      <Box>
-        {data ? (
-          <Table
-            columns={columns}
-            dataSource={data}
-            scroll={{ x: "max-content", y: scrollHeight }}
-            pagination={false}
-            bordered
-            size="small"
-          />
-        ) : null}
+      <Box sx={{ width: '100%', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: '1 1 auto', minHeight: 0, overflow: 'auto', height: '100%' }}>
+          {data ? (
+            <Table
+              columns={columns}
+              dataSource={data}
+              scroll={{ x: "max-content", y: '100%' }} // Table scrolls, page does not
+              pagination={false}
+              bordered
+              size="small"
+              style={{ height: '100%', maxHeight: '100%', overflow: 'auto' }}
+            />
+          ) : null}
+        </Box>
       </Box>
     </DelayedRender>
   );

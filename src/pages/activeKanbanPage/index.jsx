@@ -177,31 +177,27 @@ const ActiveKanban = ({ props }) => {
   return (
     <Box
       sx={{
-        minHeight: "100vh", // Ensure full viewport height
-        width: '100vw', // Ensure full viewport width
-        display: "flex",
-        flexDirection: "column",
-        padding: 0, // Remove all padding
-        margin: 0, // Remove all margin
-        boxSizing: "border-box",
-        position: "relative",
-        background: theme.palette.mode === "dark" ? "#181818" : "#f5f5f5",
-        borderTop: 0,
-        overflowX: 'hidden', // Prevent horizontal scroll from 100vw
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
       {/* Header always visible at the top */}
-      {rawJson && rawJson.header ? (
-        <ActiveKanbanHeader
-          HeaderJson={rawJson.header}
-          KanbanName={props.kanban_name}
-          CurrentWorkingDay={currentDate}
-          LastRefreshTime={lastRefreshTime}
-          isHistory={historyMode}
-        />
-      ) : (
-        <SkeletonCard />
-      )}
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 10, background: theme.palette.mode === "dark" ? "#181818" : "#f5f5f5" }}>
+        {rawJson && rawJson.header ? (
+          <ActiveKanbanHeader
+            HeaderJson={rawJson.header}
+            KanbanName={props.kanban_name}
+            CurrentWorkingDay={currentDate}
+            LastRefreshTime={lastRefreshTime}
+            isHistory={historyMode}
+          />
+        ) : (
+          <SkeletonCard />
+        )}
+      </Box>
       {bigMessage && (
         <Box
           sx={{
@@ -225,6 +221,7 @@ const ActiveKanban = ({ props }) => {
           {bigMessage.msg}
         </Box>
       )}
+      {/* Toolbar and scrollable body below header */}
       <Tooltip arrow>
         {downSM ? (
           <IconButton
@@ -327,40 +324,32 @@ const ActiveKanban = ({ props }) => {
       </Tooltip>
       <Box
         sx={{
-          flex: "1 1 auto", // Use flex shorthand for proper flexbox growth
-          overflow: "auto",
-          minHeight: 0, // Prevents flexbox overflow issues
-          marginTop: 0, // Remove any marginTop that offsets for header
+          flex: '1 1 auto',
+          minHeight: 0,
+          height: '100%',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Grid
-          container
-          direction="column"
-          spacing={0.2}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Grid item width="100%">
-            {rawJson && rawJson.body ? (
-              <ActiveKanbanBody
-                BodyJson={rawJson.body}
-                autoRefreshEnabled={autoRefreshEnabled}
-                toggleAutoRefreshAndWakeLock={toggleAutoRefreshAndWakeLock}
-                historyMode={historyMode}
-                setHistoryMode={setHistoryMode}
-                setHistoryDate={setHistoryDate}
-                zoomRatio={zoomRatio}
-                theme={theme}
-                downSM={downSM}
-                HistoryDatePicker={HistoryDatePicker}
-                FullscreenButton={FullscreenButton}
-                handleCloseFromHistory={handleCloseFromHistory}
-              />
-            ) : (
-              <SkeletonBody />
-            )}
-          </Grid>
-        </Grid>
+        {rawJson && rawJson.body ? (
+          <ActiveKanbanBody
+            BodyJson={rawJson.body}
+            autoRefreshEnabled={autoRefreshEnabled}
+            toggleAutoRefreshAndWakeLock={toggleAutoRefreshAndWakeLock}
+            historyMode={historyMode}
+            setHistoryMode={setHistoryMode}
+            setHistoryDate={setHistoryDate}
+            zoomRatio={zoomRatio}
+            theme={theme}
+            downSM={downSM}
+            HistoryDatePicker={HistoryDatePicker}
+            FullscreenButton={FullscreenButton}
+            handleCloseFromHistory={handleCloseFromHistory}
+          />
+        ) : (
+          <SkeletonBody />
+        )}
       </Box>
     </Box>
   );
