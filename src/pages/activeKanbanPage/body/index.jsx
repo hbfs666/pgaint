@@ -160,7 +160,7 @@ useEffect(() => {
             backgroundColor: "#43a047", // high contrast green
             textAlign: "center",
             borderRight: theme.palette.mode === "dark" ? "solid black" : "solid white",
-            fontSize: `${22 * (1 / zoomRatio)}px`,
+            fontSize: `${28 * (1 / zoomRatio)}px`,
             color: "#fff",
             fontWeight: 900,
             letterSpacing: 1.2,
@@ -333,7 +333,7 @@ useEffect(() => {
       onHeaderCell: () => {
         return {
           style: { backgroundColor: "lightgreen", textAlign: "center"
-          ,fontSize: `${20 * (1 / zoomRatio)}px`
+          ,fontSize: `${25 * (1 / zoomRatio)}px`
           },
         };
       },
@@ -345,7 +345,7 @@ useEffect(() => {
             textAlign="center"
             fontSize={15}
             style={{ color: theme.palette.mode === "dark" ? "white" : "black"
-              ,fontSize: `${25 * (1 / zoomRatio)}px`
+              ,fontSize: `${30 * (1 / zoomRatio)}px`
             }}
           >
             {i}
