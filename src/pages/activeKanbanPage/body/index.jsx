@@ -150,7 +150,7 @@ useEffect(() => {
           },
         };
       },
-      children: [
+      children: [ 
         {
           title: (
             <Typography
@@ -172,46 +172,53 @@ useEffect(() => {
                   theme.palette.mode === "dark" ? "black" : "white",
                 borderBottom: "solid 5px lightgreen",
                 borderRight: "solid 2px lightgreen",
+                padding: 0,
               },
             };
           },
           dataIndex: "category_name",
           key: "category_name",
-          width: 100,
-          fixed: "left",
+          width: '1%', // Let AntD auto-size to content
+          onCell: () => ({
+            style: {
+              whiteSpace: 'nowrap',
+              padding: '0 4px',
+              textAlign: 'center',
+              backgroundColor: theme.palette.mode === "dark" ? "black" : "white",
+              borderBottom: "solid 5px lightgreen",
+              borderRight: "solid 2px lightgreen",
+            },
+          }),
           render: (value, rowValue) => {
             const color =
               rowValue.isCapacity === true
                 ? "darkorange"
                 : rowValue.highlight === "Y" && theme.palette.mode === "dark"
-                ? "yellow" // Use darkyellow if highlight is 'Y' and in dark mode
+                ? "yellow"
                 : rowValue.highlight === "Y" && theme.palette.mode === "light"
-                ? "darkorange" // Use orange if highlight is 'Y' and in light mode
+                ? "darkorange"
                 : rowValue.highlight === undefined || rowValue.highlight !== "Y"
                 ? theme.palette.mode === "dark"
-                  ? "white" // Use white if highlight is not 'Y' and dark mode
-                  : "black" // Use black if highlight is not 'Y' and light mode
-                : "black"; // Default to black if rowValue.highlight is undefined or doesn't match 'Y'
+                  ? "white"
+                  : "black"
+                : "black";
 
             return (
               <Typography
-              textAlign="left"
-              fontWeight={600}
-              style={{
-                fontSize: `${30 *(1 / zoomRatio)}px`,
-                color: color,
-                width: "auto",
-                minWidth: 0,
-                maxWidth: "100%",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "inline-block"
-              }}
+                textAlign="left"
+                fontWeight={600}
+                style={{
+                  fontSize: `${30 *(1 / zoomRatio)}px`,
+                  color: color,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  padding: 0,
+                  margin: 0,
+                }}
               >
-              {value == 0 ? null : value}
-            </Typography>
-
+                {value == 0 ? null : value}
+              </Typography>
             );
           },
           onCell: (rowValue, rowIndex) => {

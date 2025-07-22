@@ -82,41 +82,39 @@ const ActiveKanbanHeader = ({
         sx={{
           bgcolor: theme.palette.mode === "dark" ? "black" : "white",
           color: "#fff",
-          overflow: "hidden",
-          position: "fixed", 
-          top: 0, 
-          left: 0,
-          width: "100vw", 
-          zIndex: 5, 
           boxShadow: 3, 
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
           "&:after": {
             content: '""',
             position: "absolute",
-            width: 210,
-            height: 210,
+            width: 120, // smaller
+            height: 120, // smaller
             background: theme.palette.secondary[800],
             borderRadius: "50%",
-            top: { xs: -105, sm: -85 },
-            right: { xs: -140, sm: -95 },
+            top: { xs: -60, sm: -40 }, // further up
+            right: { xs: -100, sm: -70 }, // further right
+            pointerEvents: 'none', // never block content
           },
           "&:before": {
             content: '""',
             position: "absolute",
-            width: 210,
-            height: 210,
+            width: 120,
+            height: 120,
             background: theme.palette.secondary[800],
             borderRadius: "50%",
-            top: { xs: -155, sm: -125 },
-            right: { xs: -70, sm: -15 },
+            top: { xs: -110, sm: -90 },
+            right: { xs: -30, sm: 30 },
             opacity: 0.5,
+            pointerEvents: 'none',
           },
         }}
       >
         <Box
-          sx={{ p: 2 }}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
+          sx={{ p: 2, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
         >
           <Grid
             container
@@ -208,7 +206,7 @@ const ActiveKanbanHeader = ({
             flexItem
             sx={{ borderBottomWidth: 3 }}
           />
-          <Grid container direction="row" justifyContent="space-between" mt={1}>
+          <Grid container direction="row" justifyContent="space-between" mt={1} sx={{ minHeight: `${80 * (1 / zoomRatio)}px`, alignItems: 'center' }}>
             <Grid item>
               <Grid
                 container
@@ -260,7 +258,6 @@ const ActiveKanbanHeader = ({
                             <Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "1.5rem" : "2.3rem",
                                   fontWeight: 800,
                                   color:
                                     theme.palette.mode === "dark"
@@ -268,6 +265,9 @@ const ActiveKanbanHeader = ({
                                       : "black",
                                   textAlign: "left",
                                   fontSize: `${50 *(1 / zoomRatio)}px`,
+                                  minHeight: `${50 * (1 / zoomRatio)}px`, // Ensure number area is always same height
+                                  display: 'flex',
+                                  alignItems: 'center',
                                 }}
                               >
                                 {item.qty <= 0 ? "\u00A0" : item.qty}
@@ -284,7 +284,10 @@ const ActiveKanbanHeader = ({
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
                         fontWeight: 500,
-                        fontSize: `${150 *(1 / zoomRatio)}px`
+                        fontSize: `${150 *(1 / zoomRatio)}px`,
+                        minHeight: `${50 * (1 / zoomRatio)}px`, // Ensure number area is always same height
+                        display: 'flex',
+                        alignItems: 'center',
                       }}
                     >
                       {wipQty <= 0 ? "\u00A0" : wipQty}
@@ -343,15 +346,16 @@ const ActiveKanbanHeader = ({
                             <Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "1.5rem" : "2.3rem",
                                   fontWeight: 800,
-                                  
                                   color:
                                     theme.palette.mode === "dark"
                                       ? "white"
                                       : "black",
                                   textAlign: "left",
-                                  fontSize: `${50 *(1 / zoomRatio)}px`
+                                  fontSize: `${50 *(1 / zoomRatio)}px`,
+                                  minHeight: `${50 * (1 / zoomRatio)}px`,
+                                  display: 'flex',
+                                  alignItems: 'center',
                                 }}
                               >
                                 {item.qty <= 0 ? "\u00A0" : item.qty}
@@ -368,7 +372,10 @@ const ActiveKanbanHeader = ({
                         fontWeight: 500,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${150 *(1 / zoomRatio)}px`
+                        fontSize: `${150 *(1 / zoomRatio)}px`,
+                        minHeight: `${50 * (1 / zoomRatio)}px`,
+                        display: 'flex',
+                        alignItems: 'center',
                       }}
                     >
                       {inputQty <= 0 ? "\u00A0" : inputQty}
@@ -430,14 +437,16 @@ const ActiveKanbanHeader = ({
                             <Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "1.5rem" : "2.3rem",
                                   fontWeight: 800,
                                   color:
                                     theme.palette.mode === "dark"
                                       ? "white"
                                       : "black",
                                   textAlign: "left",
-                                  fontSize: `${50 *(1 / zoomRatio)}px` 
+                                  fontSize: `${50 *(1 / zoomRatio)}px`,
+                                  minHeight: `${50 * (1 / zoomRatio)}px`,
+                                  display: 'flex',
+                                  alignItems: 'center',
                                 }}
                               >
                                 {item.qty <= 0 ? "\u00A0" : item.qty}
@@ -454,7 +463,10 @@ const ActiveKanbanHeader = ({
                         fontWeight: 500,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${150 *(1 / zoomRatio)}px`
+                        fontSize: `${150 *(1 / zoomRatio)}px`,
+                        minHeight: `${50 * (1 / zoomRatio)}px`,
+                        display: 'flex',
+                        alignItems: 'center',
                       }}
                     >
                       {outputQty <= 0 ? null : outputQty}

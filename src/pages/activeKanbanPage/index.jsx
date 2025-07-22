@@ -51,9 +51,6 @@ const ActiveKanban = ({ props }) => {
   const [historyMode, setHistoryMode] = useState(false);
   const [historyDate, setHistoryDate] = useState("");
 
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showProgress, setShowProgress] = useState(false);
-
   const theme = useTheme();
   const downSM = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -105,26 +102,9 @@ const ActiveKanban = ({ props }) => {
   // Handle wake-lock
   useWakeLock(wakeLockEnabled);
 
-  const startProgressBar = () => {
-    setShowProgress(true);
-    setLoadingProgress(0);
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 20;
-      if (progress >= 100) {
-        setLoadingProgress(100);
-        clearInterval(interval);
-        setTimeout(() => setShowProgress(false), 400);
-      } else {
-        setLoadingProgress(progress);
-      }
-    }, 120);
-  };
-
   // Trigger progress bar on data fetch
   const getData = useMutation({
     mutationFn: () => {
-      startProgressBar();
       return getKanbanRecord(props.mapping_key);
     },
     onMutate: () => {},
@@ -197,40 +177,30 @@ const ActiveKanban = ({ props }) => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        minHeight: "100vh", // Ensure full viewport height
+        width: '100vw', // Ensure full viewport width
         display: "flex",
         flexDirection: "column",
-        padding: downSM ? "8px" : "16px",
+        padding: 0, // Remove all padding
+        margin: 0, // Remove all margin
         boxSizing: "border-box",
-        overflow: "hidden",
-        position: "relative", 
-        paddingTop: "590px",
+        position: "relative",
+        background: theme.palette.mode === "dark" ? "#181818" : "#f5f5f5",
+        borderTop: 0,
+        overflowX: 'hidden', // Prevent horizontal scroll from 100vw
       }}
     >
-      {showProgress && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "6px",
-            background: theme.palette.mode === "dark" ? "#222" : "#eee",
-            zIndex: 99999,
-            transition: "opacity 0.4s",
-            opacity: showProgress ? 1 : 0,
-            pointerEvents: showProgress ? "auto" : "none",
-          }}
-        >
-          <Box
-            sx={{
-              width: `${loadingProgress}%`,
-              height: "100%",
-              background: "linear-gradient(90deg, #90ee90, #00bcd4)",
-              transition: "width 0.2s",
-            }}
-          />
-        </Box>
+      {/* Header always visible at the top */}
+      {rawJson && rawJson.header ? (
+        <ActiveKanbanHeader
+          HeaderJson={rawJson.header}
+          KanbanName={props.kanban_name}
+          CurrentWorkingDay={currentDate}
+          LastRefreshTime={lastRefreshTime}
+          isHistory={historyMode}
+        />
+      ) : (
+        <SkeletonCard />
       )}
       {bigMessage && (
         <Box
@@ -268,7 +238,8 @@ const ActiveKanban = ({ props }) => {
               zIndex: 9999,
               width: "56px",
               height: "56px",
-              padding: 0,
+              padding: "50px",
+              background: "transparent", // Ensure no background for the button
             }}
           >
             <CircleIcon sx={{ fontSize: 40 }} />
@@ -276,7 +247,7 @@ const ActiveKanban = ({ props }) => {
         ) : (
           <Box
             sx={{
-              display: "fixed",
+              display: "flex",
               height: `${50 * (1 / zoomRatio)}px`,
               alignItems: "center",
               justifyContent: "space-between",
@@ -285,8 +256,8 @@ const ActiveKanban = ({ props }) => {
               left: 0,
               width: "100%",
               padding: "8px",
-              backgroundColor:
-                theme.palette.mode === "dark" ? "black" : "white",
+              marginTop: `${16 * (1 / zoomRatio)}px`,
+              background: "transparent", // Remove any background from toolbar
               zIndex: 1,
             }}
           >
@@ -356,10 +327,10 @@ const ActiveKanban = ({ props }) => {
       </Tooltip>
       <Box
         sx={{
-          flexGrow: 1,
+          flex: "1 1 auto", // Use flex shorthand for proper flexbox growth
           overflow: "auto",
-          marginTop: "8px",
-          min: 0,
+          minHeight: 0, // Prevents flexbox overflow issues
+          marginTop: 0, // Remove any marginTop that offsets for header
         }}
       >
         <Grid
@@ -370,21 +341,21 @@ const ActiveKanban = ({ props }) => {
           justifyContent="center"
         >
           <Grid item width="100%">
-            {rawJson && rawJson.header ? (
-              <ActiveKanbanHeader
-                HeaderJson={rawJson.header}
-                KanbanName={props.kanban_name}
-                CurrentWorkingDay={currentDate}
-                LastRefreshTime={lastRefreshTime}
-                isHistory={historyMode}
-              />
-            ) : (
-              <SkeletonCard />
-            )}
-          </Grid>
-          <Grid item width="100%">
             {rawJson && rawJson.body ? (
-              <ActiveKanbanBody BodyJson={rawJson.body} />
+              <ActiveKanbanBody
+                BodyJson={rawJson.body}
+                autoRefreshEnabled={autoRefreshEnabled}
+                toggleAutoRefreshAndWakeLock={toggleAutoRefreshAndWakeLock}
+                historyMode={historyMode}
+                setHistoryMode={setHistoryMode}
+                setHistoryDate={setHistoryDate}
+                zoomRatio={zoomRatio}
+                theme={theme}
+                downSM={downSM}
+                HistoryDatePicker={HistoryDatePicker}
+                FullscreenButton={FullscreenButton}
+                handleCloseFromHistory={handleCloseFromHistory}
+              />
             ) : (
               <SkeletonBody />
             )}
