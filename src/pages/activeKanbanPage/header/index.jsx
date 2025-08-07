@@ -88,16 +88,19 @@ const ActiveKanbanHeader = ({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          width: '100%',
+          minHeight: 200,
+          
           "&:after": {
             content: '""',
             position: "absolute",
-            width: 120, // smaller
-            height: 120, // smaller
+            width: 120, 
+            height: 70, 
             background: theme.palette.secondary[800],
             borderRadius: "50%",
-            top: { xs: -60, sm: -40 }, // further up
-            right: { xs: -100, sm: -70 }, // further right
-            pointerEvents: 'none', // never block content
+            top: { xs: -60, sm: -40 }, 
+            right: { xs: -100, sm: -70 }, 
+            pointerEvents: 'none', 
           },
           "&:before": {
             content: '""',
@@ -114,12 +117,21 @@ const ActiveKanbanHeader = ({
         }}
       >
         <Box
-          sx={{ p: 2, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
+          sx={{
+            p: 1,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: 200,
+          }}
         >
           <Grid
             container
             direction="row"
             justifyContent={downSM ? "center" : "space-between"}
+            sx={{ mb: 0.5 }}
           >
             {downSM ? null : (
               <Grid item>
@@ -127,12 +139,11 @@ const ActiveKanbanHeader = ({
                   <Grid item>
                     <Typography
                       sx={{
-                        //fontSize: "0.7rem",
                         fontWeight: 400,
-                        marginRight: 5,
+                        marginRight: 3,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${23 *(1 / zoomRatio)}px`
+                        fontSize: `${14 *(1 / zoomRatio)}px`
                       }}
                     >
                       {isHistory?`History`:`Working Day`}
@@ -141,11 +152,10 @@ const ActiveKanbanHeader = ({
                   <Grid item>
                     <Typography
                       sx={{
-                        //fontSize: "1rem",
                         fontWeight: 600,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${23 *(1 / zoomRatio)}px`
+                        fontSize: `${14 *(1 / zoomRatio)}px`
                       }}
                     >
                       {CurrentWorkingDay}
@@ -157,10 +167,9 @@ const ActiveKanbanHeader = ({
             <Grid item>
               <Typography
                 sx={{
-                  //fontSize: "1.4rem",
                   fontWeight: 600,
                   color: theme.palette.mode === "dark" ? "white" : "black",
-                  fontSize: `${23 *(1 / zoomRatio)}px`
+                  fontSize: `${16 *(1 / zoomRatio)}px`
                 }}
               >
                 {KanbanName}
@@ -172,12 +181,11 @@ const ActiveKanbanHeader = ({
                   <Grid item>
                     <Typography
                       sx={{
-                        //fontSize: "0.7rem",
                         fontWeight: 400,
-                        marginRight: 5,
+                        marginRight: 3,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${23 *(1 / zoomRatio)}px`,
+                        fontSize: `${14 *(1 / zoomRatio)}px`,
                       }}
                     >
                       {`Last Update`}
@@ -186,11 +194,10 @@ const ActiveKanbanHeader = ({
                   <Grid item>
                     <Typography
                       sx={{
-                        //fontSize: "1rem",
                         fontWeight: 600,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${23 *(1 / zoomRatio)}px`
+                        fontSize: `${14 *(1 / zoomRatio)}px`
                       }}
                     >
                       {LastRefreshTime}
@@ -204,9 +211,9 @@ const ActiveKanbanHeader = ({
           <Divider
             orientation="horizontal"
             flexItem
-            sx={{ borderBottomWidth: 3 }}
+            sx={{ borderBottomWidth: 5, my: 1.5 }}
           />
-          <Grid container direction="row" justifyContent="space-between" mt={1} sx={{ minHeight: `${80 * (1 / zoomRatio)}px`, alignItems: 'center' }}>
+          <Grid container direction="row" justifyContent="space-between" mt={1.5} sx={{ minHeight: `${90 * (1 / zoomRatio)}px`, alignItems: 'center' }}>
             <Grid item>
               <Grid
                 container
@@ -217,10 +224,9 @@ const ActiveKanbanHeader = ({
                 <Grid item>
                   <Typography
                     sx={{
-                      //fontSize: downSM ? "0.8rem" : "1.5rem",
                       fontWeight: 700,
                       color: theme.palette.mode === "dark" ? "white" : "black",
-                      fontSize: `${30 *(1 / zoomRatio)}px`,
+                      fontSize: `${45 *(1 / zoomRatio)}px`,
                       marginRight: 5,
                     }}
                   >
@@ -238,13 +244,12 @@ const ActiveKanbanHeader = ({
                             direction="row"
                             alignItems="center"
                             justifyContent="space-between"
-                            spacing={1}
+                            spacing={0.5}
                           >
                             {item.category_name?<Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "0.5rem" : "1.2rem",
-                                  fontSize: `${30 *(1 / zoomRatio)}px`,
+                                  fontSize: `${26 *(1 / zoomRatio)}px`,
                                   fontWeight: 400,
                                   color:
                                     theme.palette.mode === "dark"
@@ -264,8 +269,8 @@ const ActiveKanbanHeader = ({
                                       ? "white"
                                       : "black",
                                   textAlign: "left",
-                                  fontSize: `${50 *(1 / zoomRatio)}px`,
-                                  minHeight: `${50 * (1 / zoomRatio)}px`, // Ensure number area is always same height
+                                  fontSize: `${45 *(1 / zoomRatio)}px`,
+                                  minHeight: `${42 * (1 / zoomRatio)}px`,  
                                   display: 'flex',
                                   alignItems: 'center',
                                 }}
@@ -280,12 +285,11 @@ const ActiveKanbanHeader = ({
                   ) : (
                     <Typography
                       sx={{
-                        //fontSize: downSM ? "1.8rem" : "2.5rem",
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
                         fontWeight: 500,
-                        fontSize: `${150 *(1 / zoomRatio)}px`,
-                        minHeight: `${50 * (1 / zoomRatio)}px`, // Ensure number area is always same height
+                        fontSize: `${85 *(1 / zoomRatio)}px`,
+                        minHeight: `${42 * (1 / zoomRatio)}px`, 
                         display: 'flex',
                         alignItems: 'center',
                       }}
@@ -306,10 +310,9 @@ const ActiveKanbanHeader = ({
                 <Grid item>
                   <Typography
                     sx={{
-                      //fontSize: downSM ? "0.8rem" : "1.5rem",
                       fontWeight: 700,
                       color: "darkorange",
-                      fontSize: `${30 *(1 / zoomRatio)}px`,
+                      fontSize: `${45 *(1 / zoomRatio)}px`,
                       marginRight: 5,
                     }}
                   >
@@ -326,18 +329,17 @@ const ActiveKanbanHeader = ({
                             direction="row"
                             alignItems="center"
                             justifyContent="space-between"
-                            spacing={1}
+                            spacing={0.5}
                           >
                             {item.category_name?<Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "0.5rem" : "1.2rem",
                                   fontWeight: 500,
                                   color:
                                     theme.palette.mode === "dark"
                                       ? "white"
                                       : "black",
-                                    fontSize: `${30 *(1 / zoomRatio)}px`
+                                    fontSize: `${26 *(1 / zoomRatio)}px`
                                 }}
                               >
                                 {item.category_name}
@@ -352,8 +354,8 @@ const ActiveKanbanHeader = ({
                                       ? "white"
                                       : "black",
                                   textAlign: "left",
-                                  fontSize: `${50 *(1 / zoomRatio)}px`,
-                                  minHeight: `${50 * (1 / zoomRatio)}px`,
+                                  fontSize: `${45 *(1 / zoomRatio)}px`,
+                                  minHeight: `${42 * (1 / zoomRatio)}px`,
                                   display: 'flex',
                                   alignItems: 'center',
                                 }}
@@ -368,12 +370,11 @@ const ActiveKanbanHeader = ({
                   ) : (
                     <Typography
                       sx={{
-                        //fontSize: downSM ? "1.8rem" : "2.5rem",
                         fontWeight: 500,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${150 *(1 / zoomRatio)}px`,
-                        minHeight: `${50 * (1 / zoomRatio)}px`,
+                        fontSize: `${85 *(1 / zoomRatio)}px`,
+                        minHeight: `${42 * (1 / zoomRatio)}px`,
                         display: 'flex',
                         alignItems: 'center',
                       }}
@@ -390,14 +391,14 @@ const ActiveKanbanHeader = ({
                 alignItems="center"
                 direction="row"
                 justifyContent="center"
-                sx={{ minHeight: `${50 * (1 / zoomRatio)}px` }} // Ensure enough height for vertical centering
+                sx={{ minHeight: `${30 * (1 / zoomRatio)}px` }} 
               >
                 <Grid item sx={{ display: "flex", alignItems: "center", height: "100%" }}>
                   <Typography
                     sx={{
                       fontWeight: 700,
                       color: "darkorange",
-                      fontSize: `${30 *(1 / zoomRatio)}px`,
+                      fontSize: `${45 *(1 / zoomRatio)}px`,
                       marginRight: 5,
                       display: "flex",
                       alignItems: "center",
@@ -417,18 +418,17 @@ const ActiveKanbanHeader = ({
                             direction="row"
                             alignItems="center"
                             justifyContent="space-between"
-                            spacing={1}
+                            spacing={0.5}
                           >
                             {item.category_name?<Grid item>
                               <Typography
                                 sx={{
-                                  //fontSize: downSM ? "0.5rem" : "1.2rem",
                                   fontWeight: 500,
                                   color:
                                     theme.palette.mode === "dark"
                                       ? "white"
                                       : "black",
-                                  fontSize: `${30 *(1 / zoomRatio)}px`
+                                  fontSize: `${26 *(1 / zoomRatio)}px`
                                 }}
                               >
                                 {item.category_name}
@@ -443,8 +443,8 @@ const ActiveKanbanHeader = ({
                                       ? "white"
                                       : "black",
                                   textAlign: "left",
-                                  fontSize: `${50 *(1 / zoomRatio)}px`,
-                                  minHeight: `${50 * (1 / zoomRatio)}px`,
+                                  fontSize: `${45 *(1 / zoomRatio)}px`,
+                                  minHeight: `${42 * (1 / zoomRatio)}px`,
                                   display: 'flex',
                                   alignItems: 'center',
                                 }}
@@ -459,14 +459,13 @@ const ActiveKanbanHeader = ({
                   ) : (
                     <Typography
                       sx={{
-                        //fontSize: downSM ? "1.8rem" : "2.5rem",
                         fontWeight: 500,
                         color:
                           theme.palette.mode === "dark" ? "white" : "black",
-                        fontSize: `${150 *(1 / zoomRatio)}px`,
-                        minHeight: `${50 * (1 / zoomRatio)}px`,
+                        fontSize: `${85 *(1 / zoomRatio)}px`,
+                        minHeight: `${42 * (1 / zoomRatio)}px`,
                         display: 'flex',
-                        alignItems: 'center',
+                        alignItems: 'center'
                       }}
                     >
                       {outputQty <= 0 ? null : outputQty}
