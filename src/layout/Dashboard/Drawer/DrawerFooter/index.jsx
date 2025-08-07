@@ -12,7 +12,7 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const DrawerFooterStyled = styled(Box)(({ theme }) => ({
-  marginTop: "auto", // Pushes footer to the bottom
+  marginTop: "auto", 
   display: "flex",
   flexDirection:"column",
   alignItems: "center",
@@ -46,15 +46,15 @@ export default function DrawerFooter() {
           to="/addKanban"
           variant="contained"
           disabled={process.env.REACT_APP_MASTER_MODE=="false"?true:false}
-          startIcon={process.env.REACT_APP_MASTER_MODE=="false"?null:<AddCircleOutlineIcon sx={{ fontSize: `${40 * (1 / zoomRatio)}px` }} />}
+          startIcon={process.env.REACT_APP_MASTER_MODE=="false"?null:<AddCircleOutlineIcon sx={{ fontSize: `${30 * (1 / zoomRatio)}px` }} />}
           sx={{
             mb: 1,
             backgroundColor: theme.palette.mode === "dark" ? "#8bc34a" : "#1976d2",
             color: "#fff",
             borderRadius: "8px",
-            padding: `${18 * (1 / zoomRatio)}px ${32 * (1 / zoomRatio)}px`,
+            padding: `${5 * (1 / zoomRatio)}px ${10 * (1 / zoomRatio)}px`,
             width: "100%",
-            fontSize: `${28 * (1 / zoomRatio)}px`,
+            fontSize: `${20 * (1 / zoomRatio)}px`,
             fontWeight: 700,
             "&:hover": {
               backgroundColor:
@@ -66,12 +66,12 @@ export default function DrawerFooter() {
         </Button>
       </Box>
 
-      <Box display="flex" alignItems="center" justifyContent="space-between" width="30%" sx={{ mt: 2, mb: 2 }}>
-        <IconButton onClick={colorMode.toggleColorMode} sx={{ mr: 1 }}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" width="40%" minWidth={120} maxWidth={220} sx={{ mt: 2, mb: 2 }}>
+        <IconButton onClick={colorMode.toggleColorMode} sx={{ mr: 1, p: 0, minWidth: 0, minHeight: 0 }}>
           {theme.palette.mode === "light" ? (
-            <Brightness7Icon sx={{ color: "orange", fontSize: `${36 * (1 / zoomRatio)}px` }} />
+            <Brightness7Icon sx={{ color: "orange", fontSize: `${32 * (1 / zoomRatio)}px` }} />
           ) : (
-            <Brightness4Icon sx={{ color: "#1976d2", fontSize: `${36 * (1 / zoomRatio)}px` }} />
+            <Brightness4Icon sx={{ color: "#1976d2", fontSize: `${40 * (1 / zoomRatio)}px` }} />
           )}
         </IconButton>
         <Switch
@@ -79,7 +79,8 @@ export default function DrawerFooter() {
           onChange={colorMode.toggleColorMode}
           checked={theme.palette.mode === "dark"}
           sx={{
-            transform: `scale(${1.5 * (1 / zoomRatio)})`,
+            transform: `scale(${2.2 * (1 / zoomRatio)})`,
+            mx: 1,
             "& .MuiSwitch-switchBase.Mui-checked": {
               color: theme.palette.mode === "dark" ? "#8bc34a" : "#1976d2",
             },
@@ -91,7 +92,7 @@ export default function DrawerFooter() {
         />
       </Box>
       <Divider sx={{ width: "100%", mb: 1, height: 3 }} />
-      <Typography variant="body2" color="text.secondary" sx={{ fontSize: `${22 * (1 / zoomRatio)}px`, fontWeight: 600 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ fontSize: `${18 * (1 / zoomRatio)}px`, fontWeight: 600 }}>
         &copy; {new Date().getFullYear()} Pegatron Inc
       </Typography>
     </DrawerFooterStyled>
